@@ -16,11 +16,10 @@ using namespace std;
 /* MENU */
 enum menu_e
 {
-    RESTART,
+    GAMES,
+    GRAPHLIB,
     SCORE,
     CHANGE_NAME,
-    CHANGE_GAME,
-    CHANGE_LIB,
     EXIT
 };
 
@@ -28,40 +27,36 @@ inline menu_e operator++(menu_e& orig, int)
 {
     switch (orig)
     {
-    case RESTART:
+    case GAMES:
+        return orig = GRAPHLIB;
+    case GRAPHLIB:
         return orig = SCORE;
     case SCORE:
         return orig = CHANGE_NAME;
     case CHANGE_NAME:
-        return orig = CHANGE_GAME;
-    case CHANGE_GAME:
-        return orig = CHANGE_LIB;
-    case CHANGE_LIB:
         return orig = EXIT;
     case EXIT:
-        return orig = RESTART;
+        return orig = GAMES;
     default:
-        return orig = RESTART;
+        return orig = GAMES;
     }
 }
 inline menu_e operator--(menu_e& orig, int)
 {
     switch (orig)
     {
-    case RESTART:
+    case GAMES:
         return orig = EXIT;
     case EXIT:
-        return orig = CHANGE_LIB;
-    case CHANGE_LIB:
-        return orig = CHANGE_GAME;
-    case CHANGE_GAME:
         return orig = CHANGE_NAME;
     case CHANGE_NAME:
         return orig = SCORE;
     case SCORE:
-        return orig = RESTART;
+        return orig = GRAPHLIB;
+    case GRAPHLIB:
+        return orig = GAMES;
     default:
-        return orig = RESTART;
+        return orig = GAMES;
     }
 }
 /* !MENU */
