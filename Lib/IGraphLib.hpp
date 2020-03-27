@@ -89,8 +89,6 @@ typedef struct pixel_s
 
 typedef struct map_info_s
 {
-    int width;
-    int length;
     vector<pixel_t> pixel;
     vector<string> map;
 } map_info_t;
