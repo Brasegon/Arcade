@@ -36,13 +36,22 @@ void checkFileExist(char *file) {
     }
 }
 
+template<typename K, typename V>
+void print_map(map<K,V> const &m)
+{
+    for (auto const& pair: m) {
+        cout << "{" << pair.first << ": " << pair.second << "}" << endl;
+    }
+}
+
 int main(int ac, char **av) {
     if (ac == 2) {
         checkFileExist(av[1]);
 		Core core(av[1]);
-		core.startArcade();
-		cout << core.getGameList()[0] << endl;
-		cout << core.getLibList()[0] << endl;
+		// core.startArcade();
+		print_map(core.getGameList());
+		print_map(core.getLibList());
+		// core.startArcade();
         return (0);
     }
     return (84);
