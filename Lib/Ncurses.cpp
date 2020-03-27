@@ -134,7 +134,29 @@ int Ncurses::displayMenu()
 {
     int ch = getch();
 
-    if (ch != ERR) {
+    if (ch == KEY_RESIZE) {
+        wresize(stdscr, LINES, COLS);
+        wresize(wmenu, LINES, COLS/4);
+        wresize(wvisual, LINES, (COLS/4)*3);
+        clear();
+        wclear(wmenu);
+        wclear(wvisual);
+        refresh();
+        wmenu = newwin(LINES, COLS/4, 0, 0);
+        box(wmenu, 0, 0);
+        wmove(wmenu, 1, 2);
+        waddstr(wmenu, "GAMES");
+        wmove(wmenu, 2, 2);
+        waddstr(wmenu, "GRAPHICAL LIBRARY");
+        wmove(wmenu, 3, 2);
+        waddstr(wmenu, "SCORE");
+        wmove(wmenu, 4, 2);
+        waddstr(wmenu, "CHANGE NAME");
+        wmove(wmenu, 5, 2);
+        waddstr(wmenu, "EXIT");
+        mvwin(wvisual, 0, COLS/4);
+        box(wvisual, 0, 0);
+        update_scr();
     }
     if (ch == KEY_DOWN) {
         menu++;
