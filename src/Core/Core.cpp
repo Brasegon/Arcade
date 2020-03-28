@@ -8,6 +8,7 @@
 #include "Core.hpp"
 #include "DLLoader.hpp"
 
+
 static const std::regex REGEX("^[a-zA-Z0-9_]*.so");
 Core::Core(const std::string &lib)
 {

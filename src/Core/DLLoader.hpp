@@ -12,6 +12,8 @@
 #include <string>
 #include <iostream>
 #include "MyExeption.hpp"
+#include "IGame_lib.hpp"
+#include "IGraphical_lib.hpp"
 
 template <typename T>
 class DLLoader {
