@@ -1,4 +1,4 @@
-NAME	= program
+NAME	= arcade
 
 CC	= g++
 
@@ -26,3 +26,7 @@ fclean: clean
 re: fclean all
 
 .PHONY: all clean fclean re
+
+#core
+#games
+#graphicals
