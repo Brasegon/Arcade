@@ -45,7 +45,6 @@ std::string const &Core::getPathLibFromWhatLib()
 void Core::load_lib()
 {
     DLLoader<IGraphical_lib> *temp = new DLLoader<IGraphical_lib>(getPathLibFromWhatLib());
-
     _actual_graphical_lib = temp->getInstance("graphical_lib");
     if (_actual_graphical_lib == NULL)
         throw MyExeption("ALED");
@@ -86,26 +85,26 @@ void Core::startGame()
         _actual_graphical_lib->clear(); /* Clear l'affichage */
         drawGame_Map(); /* Draw map */
         record_key = _actual_graphical_lib->getKey(); /* recuper les imput du clavier */
-        if (record_key == -1)
+        if (record_key == keyEvent::EXIT)
             exit(0);
-        if (record_key != 0)
+        if (record_key != keyEvent::NOTHING)
             event(record_key);
     }
 }
 
 void Core::event(int record_key) /* A completer surment avec un enum pour facilitée la comprension */
 {
-    if (record_key == 1)
+    if (record_key == keyEvent::NEXT_GAME)
         nextGame_Lib();
-    if (record_key == 2)
+    if (record_key == keyEvent::PREV_GAME)
         prevGame_Lib();
-    if (record_key == 3)
+    if (record_key == keyEvent::NEXT_LIB)
         nextGraphique_Lib();
-    if (record_key == 4)
+    if (record_key == keyEvent::PREV_LIB)
         prevGraphique_Lib();
-    if (record_key == 5)
+    if (record_key == keyEvent::RESTART)
         restartArcade();
-    if (record_key == 6)
+    if (record_key == keyEvent::START)
         startGame();
 }
 

@@ -15,6 +15,24 @@
 #include "IGame_lib.hpp"
 #include "MyExeption.hpp"
 
+
+enum keyEvent{
+    EXIT = -1,
+    NOTHING,
+    NEXT_GAME,
+    PREV_GAME,
+    NEXT_LIB,
+    PREV_LIB,
+    RESTART,
+    START
+};
+
+enum playerEvent {
+    TOP = 1,
+    DOWN,
+    LEFT,
+    RIGTH
+};
 class Core {
     public:
         Core(const std::string &lib);
