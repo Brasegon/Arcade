@@ -8,7 +8,7 @@
 #ifndef NCURSES_HPP_
 #define NCURSES_HPP_
 
-#include "IGraphLib.hpp"
+#include "../IGraphLib.hpp"
 #include <ncurses.h>
 #include <thread>
 

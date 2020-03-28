@@ -5,7 +5,7 @@
 ** testNcurses
 */
 
-#include "IGraphLib.hpp"
+#include "../IGraphLib.hpp"
 #include "Ncurses.hpp"
 #include <iomanip>
 
