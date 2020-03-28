@@ -1,4 +1,4 @@
-NAME	= program
+NAME	= arcade
 
 CC	= g++
 
@@ -15,7 +15,7 @@ CPPFLAGS += -Wall -Wextra
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	 $(CC) $(OBJS) -o $(NAME) $(LDFLAGS)
+	 $(CC) $(OBJS) -o $(NAME) $(LDFLAGS) -Wl,--no-as-needed -ldl
 
 clean:
 	$(RM) $(OBJS)

@@ -10,12 +10,11 @@
 
 class IGraphical_lib {
     public:
-        IGraphical_lib();
-        ~IGraphical_lib();
+        virtual ~IGraphical_lib() = 0;
 
-        int menu();
-        void clear();
-        int getKey();
+        virtual int menu() = 0;
+        virtual void clear() = 0;
+        virtual int getKey() = 0;
 
     protected:
     private:

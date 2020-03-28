@@ -10,9 +10,8 @@
 
 class IGame_lib {
     public:
-        IGame_lib();
-        ~IGame_lib();
-        /*map_info_t*/ std::vector<std::string> getMap();
+        virtual ~IGame_lib() = 0;
+        /*map_info_t*/ virtual std::vector<std::string> getMap() = 0;
 
     protected:
     private:
