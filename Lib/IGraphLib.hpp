@@ -92,11 +92,13 @@ typedef struct map_info_s
 class IGraphLib {
     public:
         virtual ~IGraphLib() = default;
-        virtual int displayMenu() = 0;
-        virtual void displayMap(map_info_t map) = 0;
         virtual void setGameList(vector<string>) = 0;
         virtual void setLibList(vector<string>) = 0;
-
+        virtual void init_menu() = 0;
+        virtual void init_game() = 0;
+        virtual int displayMenu() = 0;
+        virtual void displayMap(map_info_t map) = 0;
+        virtual int getKey() = 0;
     protected:
     private:
 };

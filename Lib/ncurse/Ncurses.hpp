@@ -17,11 +17,13 @@ class Ncurses : public IGraphLib
     public:
         Ncurses();
         ~Ncurses();
-        int displayMenu();
-        void displayMap(map_info_t map);
         void setGameList(vector<string>);
         void setLibList(vector<string>);
-
+        void init_menu();
+        void init_game();
+        int displayMenu();
+        void displayMap(map_info_t map);
+        int getKey();
     protected:
     private:
         void update_scr();

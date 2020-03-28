@@ -7,6 +7,7 @@
 
 #include "Ncurses.hpp"
 
+//contructeur
 Ncurses::Ncurses()
 {
     menu = GAMES;
@@ -29,7 +30,20 @@ Ncurses::Ncurses()
     init_pair(2, COLOR_RED, COLOR_BLACK);
     init_pair(3, COLOR_GREEN, COLOR_BLACK);
     refresh();
-    /*-- initialisation wmenu --*/
+
+}
+
+//destructeur
+Ncurses::~Ncurses()
+{
+    delwin(wmenu);
+    delwin(wvisual);
+    endwin();
+}
+
+// Initialisation de wmenu
+void Ncurses::init_menu()
+{
     wmenu = newwin(LINES, COLS/4, 0, 0);
     box(wmenu, 0, 0);
     wmove(wmenu, 1, 2);
@@ -45,15 +59,12 @@ Ncurses::Ncurses()
     /*-- initialisation wvisual --*/
     wvisual = newwin(LINES, (COLS/4)*3, 0, COLS/4);
     wrefresh(wvisual);
-
     update_scr();
 }
 
-Ncurses::~Ncurses()
+void Ncurses::init_game()
 {
-    delwin(wmenu);
-    delwin(wvisual);
-    endwin();
+    clear();
 }
 
 void Ncurses::setGameList(vector<string> list)
@@ -66,6 +77,7 @@ void Ncurses::setLibList(vector<string> list)
     liblist = list;
 }
 
+// update les fenêtres du menu
 void Ncurses::update_scr()
 {
     int i = 0;
@@ -135,6 +147,7 @@ void Ncurses::update_scr()
     wrefresh(wvisual);
 }
 
+// affiche le menu
 int Ncurses::displayMenu()
 {
     int ch = getch();
@@ -196,13 +209,19 @@ int Ncurses::displayMenu()
     return 0;
 }
 
+// affiche la map envoyée par le jeu
 void Ncurses::displayMap(map_info_t map)
 {
     int i = 0;
     erase();
-    // for (string line : map.map) {
-    //     mvaddstr(1+i, 1, line.c_str);
-    //     i++;
-    // }
+    for (string line : map.map) {
+        mvaddstr(1+i, 1, line.c_str());
+        i++;
+    }
     refresh();
+}
+
+int Ncurses::getKey()
+{
+    return getch();
 }
