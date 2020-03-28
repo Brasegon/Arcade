@@ -11,10 +11,12 @@
 #include <vector>
 #include <dirent.h>
 #include <regex>
-#include "IGraphical_lib.hpp"
 #include "IGame_lib.hpp"
 #include "MyExeption.hpp"
+#include "../../Lib/IGraphLib.hpp"
+#include "../../Lib/nCurses/Ncurses.hpp"
 
+void game_loop(IGame_lib *game, IGraphLib *lib);
 
 enum keyEvent{
     EXIT = -1,
@@ -61,7 +63,7 @@ class Core {
         std::map<std::string, std::string> _map_lib_path;
         std::map<std::string, std::string> _map_game_path;
         std::string _string_path_lib;
-        IGraphical_lib *_actual_graphical_lib;
+        IGraphLib *_actual_graphical_lib;
         IGame_lib *_actual_game_lib;
         int _what_game;
         int _what_graphical_lib;

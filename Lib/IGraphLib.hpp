@@ -16,47 +16,47 @@ using namespace std;
 /* MENU */
 enum menu_e
 {
-    GAMES,
-    GRAPHLIB,
-    SCORE,
-    CHANGE_NAME,
-    EXIT
+    MENU_GAMES,
+    MENU_GRAPHLIB,
+    MENU_SCORE,
+    MENU_CHANGE_NAME,
+    MENU_EXIT
 };
 
 inline menu_e operator++(menu_e& orig, int)
 {
     switch (orig)
     {
-    case GAMES:
-        return orig = GRAPHLIB;
-    case GRAPHLIB:
-        return orig = SCORE;
-    case SCORE:
-        return orig = CHANGE_NAME;
-    case CHANGE_NAME:
-        return orig = EXIT;
-    case EXIT:
-        return orig = GAMES;
+    case MENU_GAMES:
+        return orig = MENU_GRAPHLIB;
+    case MENU_GRAPHLIB:
+        return orig = MENU_SCORE;
+    case MENU_SCORE:
+        return orig = MENU_CHANGE_NAME;
+    case MENU_CHANGE_NAME:
+        return orig = MENU_EXIT;
+    case MENU_EXIT:
+        return orig = MENU_GAMES;
     default:
-        return orig = GAMES;
+        return orig = MENU_GAMES;
     }
 }
 inline menu_e operator--(menu_e& orig, int)
 {
     switch (orig)
     {
-    case GAMES:
-        return orig = EXIT;
-    case EXIT:
-        return orig = CHANGE_NAME;
-    case CHANGE_NAME:
-        return orig = SCORE;
-    case SCORE:
-        return orig = GRAPHLIB;
-    case GRAPHLIB:
-        return orig = GAMES;
+    case MENU_GAMES:
+        return orig = MENU_EXIT;
+    case MENU_EXIT:
+        return orig = MENU_CHANGE_NAME;
+    case MENU_CHANGE_NAME:
+        return orig = MENU_SCORE;
+    case MENU_SCORE:
+        return orig = MENU_GRAPHLIB;
+    case MENU_GRAPHLIB:
+        return orig = MENU_GAMES;
     default:
-        return orig = GAMES;
+        return orig = MENU_GAMES;
     }
 }
 /* !MENU */

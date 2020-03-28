@@ -10,7 +10,7 @@
 //contructeur
 Ncurses::Ncurses()
 {
-    menu = GAMES;
+    menu = MENU_GAMES;
     name[0] = 'p';
     name[1] = 'l';
     name[2] = 'a';
@@ -30,7 +30,6 @@ Ncurses::Ncurses()
     init_pair(2, COLOR_RED, COLOR_BLACK);
     init_pair(3, COLOR_GREEN, COLOR_BLACK);
     refresh();
-
 }
 
 //destructeur
@@ -83,19 +82,25 @@ void Ncurses::update_scr()
     int i = 0;
     werase(wvisual);
     box(wvisual, 0, 0);
-    if (menu == GAMES) {
+    if (menu == MENU_GAMES) {
         mvwaddstr(wmenu, 5, 2, "EXIT");
         wattron(wmenu, COLOR_PAIR(1));
         mvwaddstr(wmenu, 1, 2, "GAMES");
         wattroff(wmenu, COLOR_PAIR(1));
         mvwaddstr(wmenu, 2, 2, "GRAPHICAL LIBRARY");
-        mvwaddstr(wvisual, 2, 3, "The available games are:");
+        if (gamelist.empty()) {
+            wattron(wvisual, A_BOLD | COLOR_PAIR(2));
+            mvwaddstr(wvisual, 2, 4, "No games found");
+            wattroff(wvisual, A_BOLD | COLOR_PAIR(1));
+        }
+        else
+            mvwaddstr(wvisual, 2, 3, "The available games are:");
         for (string game : gamelist) {
             mvwprintw(wvisual, i+3, 4, "| %s", game.c_str());
             i++;
         }
     }
-    if (menu == GRAPHLIB) {
+    if (menu == MENU_GRAPHLIB) {
         mvwaddstr(wmenu, 1, 2, "GAMES");
         wattron(wmenu, COLOR_PAIR(1));
         mvwaddstr(wmenu, 2, 2, "GRAPHICAL LIBRARY");
@@ -107,12 +112,17 @@ void Ncurses::update_scr()
             i++;
         }
     }
-    if (menu == SCORE) {
+    if (menu == MENU_SCORE) {
         mvwaddstr(wmenu, 2, 2, "GRAPHICAL LIBRARY");
         wattron(wmenu, COLOR_PAIR(1));
         mvwaddstr(wmenu, 3, 2, "SCORE");
         wattroff(wmenu, COLOR_PAIR(1));
         mvwaddstr(wmenu, 4, 2, "CHANGE NAME");
+        if (gamelist.empty()) {
+            wattron(wvisual, A_BOLD | COLOR_PAIR(2));
+            mvwaddstr(wvisual, 2, 4, "No games found");
+            wattroff(wvisual, A_BOLD | COLOR_PAIR(1));
+        }
         for (string game : gamelist) {
             wattron(wvisual, A_BOLD | COLOR_PAIR(1));
             mvwprintw(wvisual, 2, 4+(18*i), "%s", game.c_str());
@@ -122,7 +132,7 @@ void Ncurses::update_scr()
             i++;
         }
     }
-    if (menu == CHANGE_NAME) {
+    if (menu == MENU_CHANGE_NAME) {
         mvwaddstr(wmenu, 3, 2, "SCORE");
         wattron(wmenu, COLOR_PAIR(1));
         mvwaddstr(wmenu, 4, 2, "CHANGE NAME");
@@ -136,7 +146,7 @@ void Ncurses::update_scr()
         mvwaddstr(wvisual, 5, 2, "Press ENTER to confirm");
         wattroff(wvisual, (A_BLINK| COLOR_PAIR(1)));
     }
-    if (menu == EXIT) {
+    if (menu == MENU_EXIT) {
         mvwaddstr(wmenu, 4, 2, "CHANGE NAME");
         wattron(wmenu, COLOR_PAIR(2));
         mvwaddstr(wmenu, 5, 2, "EXIT");
@@ -184,10 +194,10 @@ int Ncurses::displayMenu()
         menu--;
         update_scr();
     }
-    if (menu == GAMES && ch == '\n') {
+    if (menu == MENU_GAMES && ch == '\n') {
         return 1;
     }
-    if (menu == CHANGE_NAME && ch == '\n') {
+    if (menu == MENU_CHANGE_NAME && ch == '\n') {
         wmove(wvisual, 2, 19);
         nodelay(wvisual, FALSE);
         curs_set(1);
@@ -201,7 +211,7 @@ int Ncurses::displayMenu()
         curs_set(0);
         nodelay(wvisual, TRUE);
     }
-    if (menu == EXIT && ch == '\n') {
+    if (menu == MENU_EXIT && ch == '\n') {
         return -1;
     }
     if (ch == 'q')

@@ -9,26 +9,18 @@
 #include "Ncurses.hpp"
 #include "../IGraphLib.hpp"
 
-IGraphLib *ret = nullptr;
-
 __attribute__((constructor))
 void enter()
 {
-	ret = new Ncurses();
-    while (1) {
-        if (ret->displayMenu() != 0)
-            break;
-    }
 }
 
 __attribute__((destructor))
 void out()
 {
-	delete ret;
 }
 
 
-extern "C" IGraphLib *entryPoint()
+extern "C" IGraphLib *entryPoint(int w, int h)
 {
-	return ret;
+	return new Ncurses;
 }

@@ -13,6 +13,8 @@ static const std::regex REGEX("^[a-zA-Z0-9_]*.so");
 Core::Core(const std::string &lib)
 {
     _what_game = 0;
+    _actual_game_lib = nullptr;
+    _actual_graphical_lib = nullptr;
     // libList.push_back(lib);
     parseGameList();
     parseGraphList();
@@ -32,36 +34,29 @@ std::string const &Core::getPathGameFromWhatGame()
 
 std::string const &Core::getPathLibFromWhatLib()
 {
-    int x = 0;
-    std::map<std::string, std::string>::iterator i = _map_lib_path.begin();
-
-    while (i != _map_lib_path.end() && x != _what_graphical_lib) {
-        x++;
-        i++;
-    }
-    return (i->second);
+     return (libList[_what_game]);
 }
 
 void Core::load_lib()
 {
-    DLLoader<IGraphical_lib> *temp = new DLLoader<IGraphical_lib>(getPathLibFromWhatLib());
-    _actual_graphical_lib = temp->getInstance("graphical_lib");
+    DLLoader<IGraphLib> *temp = new DLLoader<IGraphLib>(getPathLibFromWhatLib());
+    _actual_graphical_lib = temp->getInstance("entryPoint");
     if (_actual_graphical_lib == NULL)
         throw MyExeption("ALED");
     startArcade();
 }
 
 void Core::startArcade() {
-    if (_actual_graphical_lib->menu() == 1)
-        _what_game = 1;
-    else
-        _what_game = 0;
-    if (_actual_game_lib != NULL)
-        delete _actual_game_lib;
-    DLLoader<IGame_lib> *temp = new DLLoader<IGame_lib>(getPathGameFromWhatGame());
-    _actual_game_lib = temp->getInstance("game", 40, 40);
-    if (_actual_game_lib == NULL)
-        throw MyExeption("actual_game_lib == NULL");
+    // if (_actual_graphical_lib->menu() == 1)
+    //     _what_game = 1;
+    // else
+    //     _what_game = 0;
+    // if (_actual_game_lib != NULL)
+    //     delete _actual_game_lib;
+    // DLLoader<IGame_lib> *temp = new DLLoader<IGame_lib>(getPathGameFromWhatGame());
+    // _actual_game_lib = temp->getInstance("game", 40, 40);
+    // if (_actual_game_lib == NULL)
+    //     throw MyExeption("actual_game_lib == NULL");
     startGame();
 }
 
@@ -75,21 +70,48 @@ void Core::restartArcade() {
     startGame();
 }
 
+void menu_loop(IGame_lib *game, IGraphLib *lib)
+{
+    int ret;
+
+    lib->init_menu();
+    while (1) {
+        ret = lib->displayMenu();
+        if (ret == -1)
+            return;
+        if (ret == 1) {
+            game_loop(game, lib);
+            return;
+        }
+    }
+}
+
+void game_loop(IGame_lib *game, IGraphLib *lib)
+{
+    int key;
+    map_info_t mapinfo;
+
+    lib->init_game();
+    while (1) {
+        // mapinfo.map = game->getMap();
+        // lib->displayMap(mapinfo);
+        key = lib->getKey();
+        // event(key);
+        if (key == 'q')
+            return;
+        if (key == 'm') {
+            menu_loop(game, lib);
+            return;
+        }
+    }
+}
+
 void Core::startGame()
 {
-    int record_key = 0;
-    _map = _actual_game_lib->getMap();
-
-    while (1) /* Manque d'une condition de fin de jeux */
-    {
-        _actual_graphical_lib->clear(); /* Clear l'affichage */
-        drawGame_Map(); /* Draw map */
-        record_key = _actual_graphical_lib->getKey(); /* recuper les imput du clavier */
-        if (record_key == keyEvent::EXIT)
-            exit(0);
-        if (record_key != keyEvent::NOTHING)
-            event(record_key);
-    }
+    _actual_graphical_lib->setGameList(gameList);
+    _actual_graphical_lib->setLibList(libList);
+    menu_loop(_actual_game_lib, _actual_graphical_lib);
+    delete _actual_graphical_lib;
 }
 
 void Core::event(int record_key) /* A completer surment avec un enum pour facilitée la comprension */
@@ -142,25 +164,25 @@ void Core::prevGame_Lib()
 
 void Core::nextGraphique_Lib()
 {
-    int max_graphical_lib = _map_lib_path.size() - 1;
+    int max_graphical_lib = libList.size() - 1;
     
     _what_graphical_lib = _what_graphical_lib + 1;
     if (_what_graphical_lib > max_graphical_lib)
         _what_graphical_lib = 0;
-    DLLoader<IGraphical_lib> *temp = new DLLoader<IGraphical_lib>(getPathLibFromWhatLib());
+    DLLoader<IGraphLib> *temp = new DLLoader<IGraphLib>(getPathLibFromWhatLib());
     delete _actual_graphical_lib;
     _actual_graphical_lib = temp->getInstance("graphical_lib");
 }
 
 void Core::prevGraphique_Lib()
 {
-    int max_graphical_lib = _map_lib_path.size() - 1;
+    int max_graphical_lib = libList.size() - 1;
     
     if (_what_graphical_lib == 0)
         _what_graphical_lib = max_graphical_lib;
     else
         _what_graphical_lib = _what_graphical_lib - 1;
-    DLLoader<IGraphical_lib> *temp = new DLLoader<IGraphical_lib>(getPathLibFromWhatLib());
+    DLLoader<IGraphLib> *temp = new DLLoader<IGraphLib>(getPathLibFromWhatLib());
     delete _actual_graphical_lib;
     _actual_graphical_lib = temp->getInstance("graphical_lib");
 }
@@ -196,22 +218,13 @@ void Core::parseGraphList() {
         while(n--) {
             std::cmatch cm;
 		    std::string name = namelist[n]->d_name;
-            if (std::regex_match(name.c_str(), cm, REGEX) /*&& std::find(libList.begin(), libList.end(), "./Lib/" + name) == libList.end()*/) {
-                _map_lib_path[name] = "./Lib/" + name;
-                // libList.push_back("./Lib/" + name);
+            if (std::regex_match(name.c_str(), cm, REGEX) && std::find(libList.begin(), libList.end(), "./Lib/" + name) == libList.end()) {
+                libList.push_back("./Lib/" + name);
             }
             free(namelist[n]);
         }
         free(namelist);
     }
-}
-
-const std::map<std::string, std::string> &Core::getGameList() const {
-    return _map_game_path;
-}
-
-const std::map<std::string, std::string> &Core::getLibList() const {
-    return _map_lib_path;
 }
 
 Core::~Core()

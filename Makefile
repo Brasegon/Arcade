@@ -12,26 +12,25 @@ OBJS	= $(SRCS:.cpp=.o)
 CPPFLAGS = -I ./src/Core/pp
 CPPFLAGS += -Wall -Wextra
 
-all: $(NAME) lib
+all: $(NAME) graphicals
 
 $(NAME): $(OBJS)
 	 $(CC) $(OBJS) -o $(NAME) $(LDFLAGS) -Wl,--no-as-needed -ldl
 
 clean:
 	$(RM) $(OBJS)
-	make clean -C ./Lib/ncurse
+	make clean -C ./Lib/nCurses
 
 fclean: clean
 	$(RM) $(NAME)
-	make fclean -C ./Lib/ncurse
+	make fclean -C ./Lib/nCurses
 
 re: fclean all
 
-lib:
-	make -C ./Lib/ncurse
+graphicals:
+	make -C ./Lib/nCurses
 
 .PHONY: all clean fclean re
 
 #core
 #games
-#graphicals
