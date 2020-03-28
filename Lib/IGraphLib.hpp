@@ -94,6 +94,8 @@ class IGraphLib {
         virtual ~IGraphLib() = default;
         virtual int displayMenu() = 0;
         virtual void displayMap(map_info_t map) = 0;
+        virtual void setGameList(vector<string>) = 0;
+        virtual void setLibList(vector<string>) = 0;
 
     protected:
     private:

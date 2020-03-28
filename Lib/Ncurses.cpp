@@ -17,12 +17,6 @@ Ncurses::Ncurses()
     name[4] = 'e';
     name[5] = 'r';
     name[6] = '\0';
-    gamelist.push_back("jeux1");
-    gamelist.push_back("jeux2");
-    gamelist.push_back("jeux3");
-    liblist.push_back("lib1");
-    liblist.push_back("lib2");
-    liblist.push_back("lib3");
     /*-- initialisation stdscr --*/
     initscr();
     curs_set(0);
@@ -58,7 +52,18 @@ Ncurses::Ncurses()
 Ncurses::~Ncurses()
 {
     delwin(wmenu);
+    delwin(wvisual);
     endwin();
+}
+
+void Ncurses::setGameList(vector<string> list)
+{
+    gamelist = list;
+}
+
+void Ncurses::setLibList(vector<string> list)
+{
+    liblist = list;
 }
 
 void Ncurses::update_scr()
@@ -166,6 +171,9 @@ int Ncurses::displayMenu()
         menu--;
         update_scr();
     }
+    if (menu == GAMES && ch == '\n') {
+        return 1;
+    }
     if (menu == CHANGE_NAME && ch == '\n') {
         wmove(wvisual, 2, 19);
         nodelay(wvisual, FALSE);
@@ -181,15 +189,20 @@ int Ncurses::displayMenu()
         nodelay(wvisual, TRUE);
     }
     if (menu == EXIT && ch == '\n') {
-        return 1;
+        return -1;
     }
     if (ch == 'q')
-        return 1;
+        return -1;
     return 0;
 }
 
 void Ncurses::displayMap(map_info_t map)
 {
-    clear();
+    int i = 0;
+    erase();
+    // for (string line : map.map) {
+    //     mvaddstr(1+i, 1, line.c_str);
+    //     i++;
+    // }
     refresh();
 }

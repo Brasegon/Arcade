@@ -19,6 +19,8 @@ class Ncurses : public IGraphLib
         ~Ncurses();
         int displayMenu();
         void displayMap(map_info_t map);
+        void setGameList(vector<string>);
+        void setLibList(vector<string>);
 
     protected:
     private:
