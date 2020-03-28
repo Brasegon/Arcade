@@ -48,9 +48,9 @@ int main(int ac, char **av) {
     if (ac == 2) {
         checkFileExist(av[1]);
 		Core core(av[1]);
-		// core.startArcade();
-		print_map(core.getGameList());
-		print_map(core.getLibList());
+		core.startArcade();
+		// print_map(core.getGameList());
+		// print_map(core.getLibList());
 		// core.startArcade();
         return (0);
     }
