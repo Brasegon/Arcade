@@ -20,15 +20,18 @@ $(NAME): $(OBJS)
 clean:
 	$(RM) $(OBJS)
 	make clean -C ./Lib/nCurses
+	make clean -C ./Lib/SFML
 
 fclean: clean
 	$(RM) $(NAME)
 	make fclean -C ./Lib/nCurses
+	make fclean -C ./Lib/SFML
 
 re: fclean all
 
 graphicals:
 	make -C ./Lib/nCurses
+	make -C ./Lib/SFML
 
 .PHONY: all clean fclean re
 
