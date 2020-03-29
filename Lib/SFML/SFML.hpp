@@ -8,6 +8,7 @@
 #ifndef SFML_HPP_
 #define SFML_HPP_
 #include "../IGraphLib.hpp"
+#include <SFML/Graphics.hpp>
 class SFML : public IGraphLib{
     public:
         SFML();
@@ -22,6 +23,7 @@ class SFML : public IGraphLib{
 
     protected:
     private:
+        sf::RenderWindow _window;
 };
 
 #endif /* !SFML_HPP_ */
