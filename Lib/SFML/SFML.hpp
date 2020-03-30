@@ -24,6 +24,8 @@ class SFML : public IGraphLib{
     protected:
     private:
         sf::RenderWindow _window;
+        std::vector<string> libList;
+        std::vector<sf::String> textLib;
 };
 
 #endif /* !SFML_HPP_ */

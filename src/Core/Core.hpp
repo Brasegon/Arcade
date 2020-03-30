@@ -16,7 +16,6 @@
 #include "../../Lib/IGraphLib.hpp"
 #include "../../Lib/nCurses/Ncurses.hpp"
 
-void game_loop(IGame_lib *game, IGraphLib *lib);
 
 enum keyEvent{
     EXIT = -1,
@@ -52,6 +51,8 @@ class Core {
         void prevGame_Lib();
         void nextGraphique_Lib();
         void prevGraphique_Lib();
+        void menu_loop(IGame_lib *game, IGraphLib *lib);
+        void game_loop(IGame_lib *game, IGraphLib *lib);
 
         void parseGameList();
         const std::map<std::string, std::string> &getGameList() const;
