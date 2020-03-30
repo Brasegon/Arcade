@@ -44,9 +44,11 @@ void SFML::init_menu()
     PrintLib.setFont(font);
     PrintGame.setFont(font);
     PrintLib.setString("Librairie List");
-    PrintLib.setPosition({0, 0});
-    PrintGame.setPosition({0, 70});
+    PrintLib.setPosition({50, 0});
+    PrintGame.setPosition({50, 70});
     PrintGame.setString("Game List");
+    line[0] = sf::Vertex(sf::Vector2f(300.f, 0.f));
+    line[1] = sf::Vertex(sf::Vector2f(300.f, 800.f));
     for (int i = 0; i < libList.size(); i += 1) {
         sf::Text text;
         textLib.push_back(text);
@@ -87,14 +89,15 @@ int SFML::displayMenu()
         }
         _window.clear();
         if (keyMenu == 0) {
-            PrintLib.setColor(sf::Color::Green);
-            PrintGame.setColor(sf::Color::White);
+            PrintLib.setFillColor(sf::Color::Green);
+            PrintGame.setFillColor(sf::Color::White);
         } else if (keyMenu == 1) {
-            PrintLib.setColor(sf::Color::White);
-            PrintGame.setColor(sf::Color::Green);
+            PrintLib.setFillColor(sf::Color::White);
+            PrintGame.setFillColor(sf::Color::Green);
         }
         _window.draw(PrintLib);
         _window.draw(PrintGame);
+        _window.draw(line, 2, sf::Lines);
         if (keyMenu == 0) {
             for (int i = 0; i < textLib.size(); i += 1) {
                 _window.draw(textLib[i]);

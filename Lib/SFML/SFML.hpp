@@ -35,6 +35,7 @@ class SFML : public IGraphLib{
         sf::Text PrintGame;
         sf::Font font;
         int keyMenu;
+        sf::Vertex line[2];
 };
 
 #endif /* !SFML_HPP_ */
