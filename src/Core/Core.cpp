@@ -70,42 +70,42 @@ void Core::restartArcade() {
     startGame();
 }
 
-void Core::menu_loop(IGame_lib *game, IGraphLib *lib)
+void Core::menu_loop()
 {
     int ret;
 
     std::vector<string> libs;
     map<string, string>::iterator it;
 
-    lib->setLibList(libList);
-    lib->init_menu();
+    _actual_graphical_lib->setLibList(libList);
+    _actual_graphical_lib->init_menu();
 
     while (1) {
-        ret = lib->displayMenu();
+        ret = _actual_graphical_lib->displayMenu();
         if (ret == -1)
             exit(0);
         if (ret == 1) {
-            game_loop(game, lib);
+            game_loop();
             return;
         }
     }
 }
 
-void Core::game_loop(IGame_lib *game, IGraphLib *lib)
+void Core::game_loop()
 {
     int key;
     map_info_t mapinfo;
     
-    lib->init_game();
+    _actual_graphical_lib->init_game();
     while (1) {
         // mapinfo.map = game->getMap();
         // lib->displayMap(mapinfo);
-        key = lib->getKey();
+        key = _actual_graphical_lib->getKey();
         // event(key);
         if (key == 'q')
             return;
         if (key == 'm') {
-            menu_loop(game, lib);
+            menu_loop();
             return;
         }
     }
@@ -115,7 +115,7 @@ void Core::startGame()
 {
     _actual_graphical_lib->setGameList(gameList);
     _actual_graphical_lib->setLibList(libList);
-    menu_loop(_actual_game_lib, _actual_graphical_lib);
+    menu_loop();
     delete _actual_graphical_lib;
 }
 

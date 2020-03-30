@@ -51,8 +51,8 @@ class Core {
         void prevGame_Lib();
         void nextGraphique_Lib();
         void prevGraphique_Lib();
-        void menu_loop(IGame_lib *game, IGraphLib *lib);
-        void game_loop(IGame_lib *game, IGraphLib *lib);
+        void menu_loop();
+        void game_loop();
 
         void parseGameList();
         const std::map<std::string, std::string> &getGameList() const;
