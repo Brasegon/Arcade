@@ -10,7 +10,7 @@ SRCS	= ./main.cpp \
 OBJS	= $(SRCS:.cpp=.o)
 
 CPPFLAGS = -I ./src/Core/pp
-CPPFLAGS += -Wall -Wextra
+CPPFLAGS += -Wall -Wextra -g3
 
 all: $(NAME) graphicals
 

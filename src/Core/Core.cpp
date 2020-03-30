@@ -15,7 +15,7 @@ Core::Core(const std::string &lib)
     _what_game = 0;
     _actual_game_lib = nullptr;
     _actual_graphical_lib = nullptr;
-    // libList.push_back(lib);
+    libList.insert(libList.begin(), "./" + lib);
     parseGameList();
     parseGraphList();
 }
@@ -82,8 +82,10 @@ void Core::menu_loop()
 
     while (1) {
         ret = _actual_graphical_lib->displayMenu();
-        if (ret == -1)
+        if (ret == -1) {
+            cout << "je passe par la" << endl;
             exit(0);
+        }
         if (ret == 1) {
             game_loop();
             return;

@@ -52,8 +52,8 @@ class DLLoader {
             return *this;
         }
 
-    protected:
         void *_void_etoile;
+    protected:
         std::string _path;
     private:
 };
