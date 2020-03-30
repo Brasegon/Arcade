@@ -30,6 +30,7 @@ Ncurses::Ncurses()
     init_pair(2, COLOR_RED, COLOR_BLACK);
     init_pair(3, COLOR_GREEN, COLOR_BLACK);
     refresh();
+
 }
 
 //destructeur
@@ -68,12 +69,22 @@ void Ncurses::init_game()
 
 void Ncurses::setGameList(vector<string> list)
 {
-    gamelist = list;
+    char gameName[50];
+    for (string game : list) {
+        game.erase(game.end()-3, game.end());
+        sscanf(game.c_str(), "./Game/lib_arcade_%s", gameName);
+        gamelist.push_back(gameName);
+    }
 }
 
 void Ncurses::setLibList(vector<string> list)
 {
-    liblist = list;
+    char libName[50];
+    for (string lib : list) {
+        lib.erase(lib.end()-3, lib.end());
+        sscanf(lib.c_str(), "./Lib/lib_arcade_%s", libName);
+        liblist.push_back(libName);
+    }
 }
 
 // update les fenêtres du menu
@@ -91,12 +102,15 @@ void Ncurses::update_scr()
         if (gamelist.empty()) {
             wattron(wvisual, A_BOLD | COLOR_PAIR(2));
             mvwaddstr(wvisual, 2, 4, "No games found");
-            wattroff(wvisual, A_BOLD | COLOR_PAIR(1));
+            wattroff(wvisual, A_BOLD | COLOR_PAIR(2));
         }
         else
             mvwaddstr(wvisual, 2, 3, "The available games are:");
         for (string game : gamelist) {
-            mvwprintw(wvisual, i+3, 4, "| %s", game.c_str());
+            mvwaddstr(wvisual, i+3, 4, "| ");
+            wattron(wvisual, COLOR_PAIR(1));
+            waddstr(wvisual, game.c_str());
+            wattroff(wvisual, COLOR_PAIR(1));
             i++;
         }
     }
@@ -108,7 +122,10 @@ void Ncurses::update_scr()
         mvwaddstr(wmenu, 3, 2, "SCORE");
         mvwaddstr(wvisual, 2, 3, "The available graphical libraries are:");
         for (string lib : liblist) {
-            mvwprintw(wvisual, i+3, 4, "| %s", lib.c_str());
+            mvwaddstr(wvisual, i+3, 4, "| ");
+            wattron(wvisual, COLOR_PAIR(1));
+            waddstr(wvisual, lib.c_str());
+            wattroff(wvisual, COLOR_PAIR(1));
             i++;
         }
     }

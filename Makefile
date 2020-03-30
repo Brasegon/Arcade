@@ -33,7 +33,9 @@ graphicals:
 	make -C ./Lib/nCurses
 	make -C ./Lib/SFML
 
+games:
+	make -C ./Game/Nibbler
+
 .PHONY: all clean fclean re
 
 #core
-#games

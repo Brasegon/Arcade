@@ -22,25 +22,20 @@ Core::Core(const std::string &lib)
 
 std::string const &Core::getPathGameFromWhatGame()
 {
-    int x = 0;
-    std::map<std::string, std::string>::iterator i = _map_game_path.begin();
-
-    while (i != _map_game_path.end() && x != _what_game) {
-        x++;
-        i++;
-    }
-    return (i->second);
+     return (gameList[0]);
 }
 
 std::string const &Core::getPathLibFromWhatLib()
 {
-     return (libList[_what_game]);
+     return (libList[0]);
 }
 
 void Core::load_lib()
 {
-    DLLoader<IGraphLib> *temp = new DLLoader<IGraphLib>(getPathLibFromWhatLib());
-    _actual_graphical_lib = temp->getInstance("entryPoint");
+    DLLoader<IGraphLib> *libtemp = new DLLoader<IGraphLib>(getPathLibFromWhatLib());
+    _actual_graphical_lib = libtemp->getInstance("entryPoint");
+    // DLLoader<game_lib> *gametemp = new DLLoader<game_lib>(getPathGameFromWhatGame());
+    // _actual_game_lib = gametemp->getInstance("entryPoint");
     if (_actual_graphical_lib == NULL)
         throw MyExeption("ALED");
     startArcade();
@@ -53,7 +48,7 @@ void Core::startArcade() {
     //     _what_game = 0;
     // if (_actual_game_lib != NULL)
     //     delete _actual_game_lib;
-    // DLLoader<IGame_lib> *temp = new DLLoader<IGame_lib>(getPathGameFromWhatGame());
+    // DLLoader<game_lib> *temp = new DLLoader<game_lib>(getPathGameFromWhatGame());
     // _actual_game_lib = temp->getInstance("game", 40, 40);
     // if (_actual_game_lib == NULL)
     //     throw MyExeption("actual_game_lib == NULL");
@@ -63,7 +58,7 @@ void Core::startArcade() {
 void Core::restartArcade() {
     if (_actual_game_lib != NULL)
         delete _actual_game_lib;
-    DLLoader<IGame_lib> *temp = new DLLoader<IGame_lib>(getPathGameFromWhatGame());
+    DLLoader<game_lib> *temp = new DLLoader<game_lib>(getPathGameFromWhatGame());
     _actual_game_lib = temp->getInstance("game", 40, 40);
     if (_actual_game_lib == NULL)
         throw MyExeption("actual_game_lib == NULL");
@@ -95,14 +90,14 @@ void Core::menu_loop()
 
 void Core::game_loop()
 {
-    int key;
+    playerEvent key = PE_NOACTION;
     map_info_t mapinfo;
     
     _actual_graphical_lib->init_game();
     while (1) {
-        // mapinfo.map = game->getMap();
-        // lib->displayMap(mapinfo);
-        key = _actual_graphical_lib->getKey();
+        // key = _actual_graphical_lib->getKey();
+        // mapinfo = _actual_game_lib->game(key);
+        // _actual_graphical_lib->displayMap(mapinfo);
         // event(key);
         if (key == 'q')
             return;
@@ -144,29 +139,27 @@ void Core::drawGame_Map()
 
 void Core::nextGame_Lib()
 {
-    int max_game_lib = _map_game_path.size() - 1;
+    int max_game_lib = gameList.size() - 1;
 
     _what_game = _what_game + 1;
     if (_what_game > max_game_lib)
         _what_game = 0;
-    DLLoader<IGame_lib> *temp = new DLLoader<IGame_lib>(getPathGameFromWhatGame());
+    DLLoader<game_lib> *temp = new DLLoader<game_lib>(getPathGameFromWhatGame());
     if (_actual_game_lib != NULL)
         delete _actual_game_lib;
     _actual_game_lib = temp->getInstance("Game", 40, 40);
-    _map = _actual_game_lib->getMap();
 }
 
 void Core::prevGame_Lib()
 {
-    int max_game_lib = _map_game_path.size() - 1;
+    int max_game_lib = gameList.size() - 1;
 
     if (_what_game == 0)
         _what_game = max_game_lib;
     else _what_game = _what_game - 1;
-    DLLoader<IGame_lib> *temp = new DLLoader<IGame_lib>(getPathGameFromWhatGame());
+    DLLoader<game_lib> *temp = new DLLoader<game_lib>(getPathGameFromWhatGame());
     delete _actual_game_lib;
     _actual_game_lib = temp->getInstance("Game", 40, 40);
-    _map = _actual_game_lib->getMap();
 }
 
 void Core::nextGraphique_Lib()
@@ -206,8 +199,8 @@ void Core::parseGameList() {
             std::cmatch cm;
 		    std::string name = namelist[n]->d_name;
             if (std::regex_match(name.c_str(), cm, REGEX)) {
-                _map_game_path[name] = "./Game/" + name;
-                // gameList.push_back("./Game/" + name);
+                gameList.push_back("./Game/" + name);
+                printf("%s", name.c_str());
             }
             free(namelist[n]);
         }
