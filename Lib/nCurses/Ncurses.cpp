@@ -70,6 +70,8 @@ void Ncurses::init_game()
 void Ncurses::setGameList(vector<string> list)
 {
     char gameName[50];
+
+    gamelist.clear();
     for (string game : list) {
         game.erase(game.end()-3, game.end());
         sscanf(game.c_str(), "./Game/lib_arcade_%s", gameName);
@@ -80,6 +82,8 @@ void Ncurses::setGameList(vector<string> list)
 void Ncurses::setLibList(vector<string> list)
 {
     char libName[50];
+
+    liblist.clear();
     for (string lib : list) {
         lib.erase(lib.end()-3, lib.end());
         sscanf(lib.c_str(), "./Lib/lib_arcade_%s", libName);

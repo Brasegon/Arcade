@@ -22,7 +22,7 @@ Core::Core(const std::string &lib)
 
 std::string const &Core::getPathGameFromWhatGame()
 {
-     return (gameList[0]);
+     return (gameList[_what_game]);
 }
 
 std::string const &Core::getPathLibFromWhatLib()
@@ -145,9 +145,9 @@ void Core::nextGame_Lib()
     if (_what_game > max_game_lib)
         _what_game = 0;
     DLLoader<game_lib> *temp = new DLLoader<game_lib>(getPathGameFromWhatGame());
-    if (_actual_game_lib != NULL)
-        delete _actual_game_lib;
-    _actual_game_lib = temp->getInstance("Game", 40, 40);
+    // if (_actual_game_lib != NULL)
+    //     delete _actual_game_lib;
+    _actual_game_lib = temp->getInstance("entryPoint", 40, 40);
 }
 
 void Core::prevGame_Lib()
@@ -158,7 +158,7 @@ void Core::prevGame_Lib()
         _what_game = max_game_lib;
     else _what_game = _what_game - 1;
     DLLoader<game_lib> *temp = new DLLoader<game_lib>(getPathGameFromWhatGame());
-    _actual_game_lib = temp->getInstance("Game", 40, 40);
+    _actual_game_lib = temp->getInstance("entryPoint", 40, 40);
 }
 
 void Core::nextGraphique_Lib()

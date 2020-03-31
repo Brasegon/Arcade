@@ -38,6 +38,7 @@ graphicals:
 
 games:
 	make -C ./Game/Nibbler
+	make -C ./Game/SolarFox
 
 .PHONY: all clean fclean re
 

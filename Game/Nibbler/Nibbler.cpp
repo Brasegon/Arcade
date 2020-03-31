@@ -61,6 +61,7 @@ void Nibbler::reset_game()
     direction_register = PE_RIGHT;
     direction = PE_RIGHT;
     apple.eaten = false;
+    clock_start = chrono::high_resolution_clock::now();
 }
 
 void Nibbler::generate_apple()
@@ -79,7 +80,8 @@ map_info_t Nibbler::game(playerEvent action)
     chrono::duration<double> elapsed_seconds;
 
     if (game_pause) {
-        if (action == PE_NOACTION)
+        if (action != PE_UP && action != PE_DOWN &&
+            action != PE_LEFT && action != PE_RIGHT)
             return map;
         else
             game_pause = false;
