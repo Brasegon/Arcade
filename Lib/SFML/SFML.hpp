@@ -31,11 +31,13 @@ class SFML : public IGraphLib{
         // for menu
         std::vector<string> libList;
         std::vector<sf::Text> textLib;
+        std::vector<sf::RectangleShape> _map;
         sf::Text PrintLib;
         sf::Text PrintGame;
         sf::Font font;
         int keyMenu;
         sf::Vertex line[2];
+        int x, y;
 };
 
 #endif /* !SFML_HPP_ */
