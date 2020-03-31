@@ -101,7 +101,6 @@ void Core::game_loop()
         mapinfo = _actual_game_lib->game(action);
         _actual_graphical_lib->displayMap(mapinfo);
         if (action == PE_EXIT) {
-            delete _actual_graphical_lib;
             return;
         }
         if (action == PE_RESTART) {

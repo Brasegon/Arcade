@@ -34,6 +34,7 @@ class Nibbler: public game_lib
     private:
         int move_body();
         void reset_game();
+        void generate_apple();
         map_info_t start_map;
         map_info_t map;
         vector<position_t> start_body;

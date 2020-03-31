@@ -41,9 +41,6 @@ Nibbler::Nibbler()
         {7, 10},
     };
     reset_game();
-    direction = PE_RIGHT;
-    apple.eaten = false;
-
 }
 
 Nibbler::~Nibbler()
@@ -54,16 +51,23 @@ void Nibbler::reset_game()
 {
     map = start_map;
     body = start_body;
-    apple.pos = {rand()%20+1, rand()%20+1};
-    while(apple == body)
-        apple.pos = {rand()%20+1, rand()%20+1};
-    map.map[apple.pos.y][apple.pos.x] = 'P';
+    generate_apple();
     map.pixel.clear();
     map.pixel.push_back({RED, apple.pos});
     for (position_t bpos : body) {
         map.pixel.push_back({GREEN, bpos});
     }
     game_pause = true;
+    direction = PE_RIGHT;
+    apple.eaten = false;
+}
+
+void Nibbler::generate_apple()
+{
+    apple.pos = {rand()%20+1, rand()%20+1};
+    while(apple == body)
+        apple.pos = {rand()%20+1, rand()%20+1};
+    map.map[apple.pos.y][apple.pos.x] = 'P';
 }
 
 
@@ -105,20 +109,28 @@ map_info_t Nibbler::game(playerEvent action)
 int Nibbler::move_body()
 {
     if (direction == PE_UP) {
-        if (map.map[body[0].y-1][body[0].x] == 'P')
+        if (map.map[body[0].y-1][body[0].x] == 'P') {
+            generate_apple();
             apple.eaten = true;
+        }
     }
     if (direction == PE_DOWN) {
-        if (map.map[body[0].y+1][body[0].x] == 'P')
+        if (map.map[body[0].y+1][body[0].x] == 'P') {
+            generate_apple();
             apple.eaten = true;
+        }
     }
     if (direction == PE_LEFT) {
-        if (map.map[body[0].y][body[0].x-1] == 'P')
+        if (map.map[body[0].y][body[0].x-1] == 'P') {
+            generate_apple();
             apple.eaten = true;
+        }
     }
     if (direction == PE_RIGHT) {
-        if (map.map[body[0].y][body[0].x+1] == 'P')
+        if (map.map[body[0].y][body[0].x+1] == 'P') {
+            generate_apple();
             apple.eaten = true;
+        }
     }
     // body following the head
     for (int i = body.size()-1; i > 0; i--) {
@@ -129,11 +141,6 @@ int Nibbler::move_body()
                 //snake body + 1
                 body.push_back(body[i]);
                 map.pixel.push_back({GREEN, body[i]});
-                //generate apple
-                apple.pos = {rand()%20+1, rand()%20+1};
-                while(apple == body)
-                    apple.pos = {rand()%20+1, rand()%20+1};
-                map.map[apple.pos.y][apple.pos.x] = 'P';
                 apple.eaten = false;
             }
             else
