@@ -10,6 +10,8 @@
 SFML::SFML()
 {
     keyMenu = 0;
+    x = 200;
+    y = 50;
 }
 void SFML::setGameList(vector<string> vect)
 {
@@ -60,14 +62,19 @@ void SFML::init_menu()
 }
 void SFML::init_game()
 {
-
+    _window.create({1280, 720, 32}, "My window");
 }
 int SFML::displayMenu()
 {
+    
     if (_window.isOpen()) {
         sf::Event event;
         while (_window.pollEvent(event))
         {
+            if (keyMenu == 0 && sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
+                _window.close();
+                return (1);
+            }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
                 keyMenu -= 1;
                 if (keyMenu <= 0) {
@@ -111,11 +118,83 @@ int SFML::displayMenu()
 }
 void SFML::displayMap(map_info_t map)
 {
-
+    if (_window.isOpen()) {
+        sf::Event event;
+        for (int i = 0; i < map.map.size(); i += 1) {
+            for (int j = 0; j < map.map[i].size(); j += 1) {
+                sf::RectangleShape rectangle(sf::Vector2f(20.f, 20.f));
+                switch (map.map[i][j])
+                {
+                case 'X':
+                    rectangle.setPosition(x, y);
+                    _map.push_back(rectangle);
+                    break;
+                case '>':
+                case 'A':
+                case '<':
+                case 'V':
+                    rectangle.setFillColor(sf::Color::Red);
+                    rectangle.setPosition(x, y);
+                    _map.push_back(rectangle);
+                    break;
+                case 'O':
+                    rectangle.setFillColor(sf::Color::Blue);
+                    rectangle.setPosition(x, y);
+                    _map.push_back(rectangle);
+                    break;
+                case 'P':
+                    rectangle.setFillColor(sf::Color::Green);
+                    rectangle.setPosition(x, y);
+                    _map.push_back(rectangle);
+                }
+                x += 20;
+            }
+            x = 200;
+            y += 20;
+        }
+        x = 200;
+        y = 50;
+        while (_window.pollEvent(event))
+        {
+            // Close window: exit
+            if (event.type == sf::Event::Closed) {
+                textLib.clear();
+                _window.close();
+            }
+            
+        }
+        _window.clear();
+        for (int i = 0; i < _map.size(); i += 1) {
+            _window.draw(_map[i]);
+        }
+        _map.clear();
+        _window.display();
+    } else {
+        return ;
+    }
 }
 playerEvent SFML::getKey()
 {
+    sf::Event event;
+    if (_window.pollEvent(event)) {
 
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+            return PE_UP;
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+            return PE_DOWN;
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            return PE_LEFT;
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+            return PE_RIGHT;
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::L)) {
+            _window.close();
+            return PE_NEXT_LIB;
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::K)) {
+            _window.close();
+            return PE_PREV_LIB;
+        }
+    }
 }
 SFML::~SFML()
 {
