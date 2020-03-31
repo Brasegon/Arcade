@@ -34,30 +34,38 @@ Nibbler::Nibbler()
     "X                    X",
     "XXXXXXXXXXXXXXXXXXXXXX",
     };
-    map = start_map;
     start_body = {
         {10, 10},
         {9, 10},
         {8, 10},
         {7, 10},
     };
-    body = start_body;
-    apple.pos = {rand()%20+1, rand()%20+1};
-    while(apple == body)
-        apple.pos = {rand()%20+1, rand()%20+1};
-    map.map[apple.pos.y][apple.pos.x] = 'P';
-    apple.eaten = false;
+    reset_game();
     direction = PE_RIGHT;
-    clock_start = chrono::high_resolution_clock::now();
-    game_pause = true;
-    pixel_t apple_pixel = {GREEN, body[0]};
-    map.pixel.push_back(apple_pixel);
+    apple.eaten = false;
 
 }
 
 Nibbler::~Nibbler()
 {
 }
+
+void Nibbler::reset_game()
+{
+    map = start_map;
+    body = start_body;
+    apple.pos = {rand()%20+1, rand()%20+1};
+    while(apple == body)
+        apple.pos = {rand()%20+1, rand()%20+1};
+    map.map[apple.pos.y][apple.pos.x] = 'P';
+    map.pixel.clear();
+    map.pixel.push_back({RED, apple.pos});
+    for (position_t bpos : body) {
+        map.pixel.push_back({GREEN, bpos});
+    }
+    game_pause = true;
+}
+
 
 map_info_t Nibbler::game(playerEvent action)
 {
@@ -84,16 +92,13 @@ map_info_t Nibbler::game(playerEvent action)
         clock_start = chrono::high_resolution_clock::now();
     //movement
     if (move_body() == 1) {
-        map = start_map;
-        apple.pos = {rand()%20+1, rand()%20+1};
-        while(apple == body)
-            apple.pos = {rand()%20+1, rand()%20+1};
-        map.map[apple.pos.y][apple.pos.x] = 'P';
-        body = start_body;
-        game_pause = true;
+        reset_game();
     }
     //color
     map.pixel[0].pos = apple.pos;
+    for (int i = 0; i < body.size(); i++) {
+        map.pixel[i+1].pos = body[i];
+    }
     return map;
 }
 
@@ -123,6 +128,7 @@ int Nibbler::move_body()
             if (apple.eaten) {
                 //snake body + 1
                 body.push_back(body[i]);
+                map.pixel.push_back({GREEN, body[i]});
                 //generate apple
                 apple.pos = {rand()%20+1, rand()%20+1};
                 while(apple == body)

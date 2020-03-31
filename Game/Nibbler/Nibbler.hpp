@@ -33,6 +33,7 @@ class Nibbler: public game_lib
     protected:
     private:
         int move_body();
+        void reset_game();
         map_info_t start_map;
         map_info_t map;
         vector<position_t> start_body;
