@@ -20,7 +20,7 @@ void enter()
 __attribute__((destructor))
 void out()
 {
-	delete ret;
+	// delete ret;
 }
 
 
