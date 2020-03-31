@@ -122,8 +122,28 @@ void SFML::displayMap(map_info_t map)
         sf::Event event;
         for (int i = 0; i < map.map.size(); i += 1) {
             for (int j = 0; j < map.map[i].size(); j += 1) {
-                if (map.map[i][j] == 'X') {
-                    sf::RectangleShape rectangle(sf::Vector2f(20.f, 20.f));
+                sf::RectangleShape rectangle(sf::Vector2f(20.f, 20.f));
+                switch (map.map[i][j])
+                {
+                case 'X':
+                    rectangle.setPosition(x, y);
+                    _map.push_back(rectangle);
+                    break;
+                case '>':
+                case 'A':
+                case '<':
+                case 'V':
+                    rectangle.setFillColor(sf::Color::Red);
+                    rectangle.setPosition(x, y);
+                    _map.push_back(rectangle);
+                    break;
+                case 'O':
+                    rectangle.setFillColor(sf::Color::Blue);
+                    rectangle.setPosition(x, y);
+                    _map.push_back(rectangle);
+                    break;
+                case 'P':
+                    rectangle.setFillColor(sf::Color::Green);
                     rectangle.setPosition(x, y);
                     _map.push_back(rectangle);
                 }
@@ -147,6 +167,7 @@ void SFML::displayMap(map_info_t map)
         for (int i = 0; i < _map.size(); i += 1) {
             _window.draw(_map[i]);
         }
+        _map.clear();
         _window.display();
     } else {
         return ;
@@ -154,7 +175,26 @@ void SFML::displayMap(map_info_t map)
 }
 playerEvent SFML::getKey()
 {
+    sf::Event event;
+    if (_window.pollEvent(event)) {
 
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+            return PE_UP;
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+            return PE_DOWN;
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            return PE_LEFT;
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+            return PE_RIGHT;
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::L)) {
+            _window.close();
+            return PE_NEXT_LIB;
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::K)) {
+            _window.close();
+            return PE_PREV_LIB;
+        }
+    }
 }
 SFML::~SFML()
 {

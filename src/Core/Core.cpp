@@ -27,7 +27,7 @@ std::string const &Core::getPathGameFromWhatGame()
 
 std::string const &Core::getPathLibFromWhatLib()
 {
-     return (libList[0]);
+     return (libList[_what_graphical_lib]);
 }
 
 void Core::load_lib()
@@ -80,7 +80,6 @@ void Core::menu_loop()
     while (1) {
         ret = _actual_graphical_lib->displayMenu();
         if (ret == -1) {
-            cout << "je passe par la" << endl;
             exit(0);
         }
         if (ret == 1) {
@@ -101,8 +100,10 @@ void Core::game_loop()
         event(action);
         mapinfo = _actual_game_lib->game(action);
         _actual_graphical_lib->displayMap(mapinfo);
-        if (action == PE_EXIT)
+        if (action == PE_EXIT) {
+            delete _actual_graphical_lib;
             return;
+        }
         if (action == PE_RESTART) {
             menu_loop();
             return;
@@ -123,8 +124,10 @@ void Core::event(playerEvent record_key)
         nextGame_Lib();
     if (record_key == PE_PREV_GAME)
         prevGame_Lib();
-    if (record_key == PE_NEXT_LIB)
+    if (record_key == PE_NEXT_LIB) {
         nextGraphique_Lib();
+        
+    }
     if (record_key == PE_PREV_LIB)
         prevGraphique_Lib();
     // if (record_key == PE_RESTART)
@@ -139,7 +142,6 @@ void Core::drawGame_Map()
 void Core::nextGame_Lib()
 {
     int max_game_lib = gameList.size() - 1;
-
     _what_game = _what_game + 1;
     if (_what_game > max_game_lib)
         _what_game = 0;
@@ -157,24 +159,23 @@ void Core::prevGame_Lib()
         _what_game = max_game_lib;
     else _what_game = _what_game - 1;
     DLLoader<game_lib> *temp = new DLLoader<game_lib>(getPathGameFromWhatGame());
-    delete _actual_game_lib;
     _actual_game_lib = temp->getInstance("Game", 40, 40);
 }
 
 void Core::nextGraphique_Lib()
 {
     int max_graphical_lib = libList.size() - 1;
-    
     _what_graphical_lib = _what_graphical_lib + 1;
     if (_what_graphical_lib > max_graphical_lib)
         _what_graphical_lib = 0;
     DLLoader<IGraphLib> *temp = new DLLoader<IGraphLib>(getPathLibFromWhatLib());
-    delete _actual_graphical_lib;
-    _actual_graphical_lib = temp->getInstance("graphical_lib");
+    _actual_graphical_lib = temp->getInstance("entryPoint");
+    _actual_graphical_lib->init_game();
 }
 
 void Core::prevGraphique_Lib()
 {
+    //delete _actual_graphical_lib;
     int max_graphical_lib = libList.size() - 1;
     
     if (_what_graphical_lib == 0)
@@ -182,8 +183,8 @@ void Core::prevGraphique_Lib()
     else
         _what_graphical_lib = _what_graphical_lib - 1;
     DLLoader<IGraphLib> *temp = new DLLoader<IGraphLib>(getPathLibFromWhatLib());
-    delete _actual_graphical_lib;
-    _actual_graphical_lib = temp->getInstance("graphical_lib");
+    _actual_graphical_lib = temp->getInstance("entryPoint");
+    _actual_graphical_lib->init_game();
 }
 
 
