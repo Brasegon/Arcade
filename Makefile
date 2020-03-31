@@ -12,9 +12,9 @@ OBJS	= $(SRCS:.cpp=.o)
 CPPFLAGS = -I ./src/Core/pp
 CPPFLAGS += -Wall -Wextra -g3
 
-all: $(NAME) graphicals
+all: core graphicals games
 
-$(NAME): $(OBJS)
+core: $(OBJS)
 	 $(CC) $(OBJS) -o $(NAME) $(LDFLAGS) -Wl,--no-as-needed -ldl
 
 clean:

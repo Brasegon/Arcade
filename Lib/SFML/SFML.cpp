@@ -113,7 +113,7 @@ void SFML::displayMap(map_info_t map)
 {
 
 }
-int SFML::getKey()
+playerEvent SFML::getKey()
 {
 
 }

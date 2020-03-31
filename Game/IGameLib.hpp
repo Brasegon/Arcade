@@ -10,15 +10,6 @@
 
 #include "../Lib/IGraphLib.hpp"
 
-
-enum playerEvent {
-    PE_NOACTION,
-    PE_UP,
-    PE_DOWN,
-    PE_LEFT,
-    PE_RIGHT
-};
-
 class game_lib {
     public:
         virtual ~game_lib() = default;

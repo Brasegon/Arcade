@@ -65,9 +65,9 @@ inline menu_e operator--(menu_e& orig, int)
 /* MAP */
 typedef enum color_e
 {
-    RED,
+    RED = 1,
     GREEN,
-    BLUE
+    BLUE,
     /*...*/
 } color_t;
 
@@ -90,6 +90,20 @@ typedef struct map_info_s
 } map_info_t;
 /* !MAP */
 
+enum playerEvent {
+    PE_EXIT = -1,
+    PE_NOACTION,
+    PE_UP,
+    PE_DOWN,
+    PE_LEFT,
+    PE_RIGHT,
+    PE_NEXT_GAME,
+    PE_PREV_GAME,
+    PE_NEXT_LIB,
+    PE_PREV_LIB,
+    PE_RESTART
+};
+
 class IGraphLib {
     public:
         virtual ~IGraphLib() = default;
@@ -99,7 +113,7 @@ class IGraphLib {
         virtual void init_game() = 0;
         virtual int displayMenu() = 0;
         virtual void displayMap(map_info_t map) = 0;
-        virtual int getKey() = 0;
+        virtual playerEvent getKey() = 0;
     protected:
     private:
 };

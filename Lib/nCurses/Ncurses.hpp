@@ -23,7 +23,7 @@ class Ncurses : public IGraphLib
         void init_game();
         int displayMenu();
         void displayMap(map_info_t map);
-        int getKey();
+        playerEvent getKey();
     protected:
     private:
         void update_scr();

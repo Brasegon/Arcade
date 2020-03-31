@@ -34,10 +34,12 @@ void Core::load_lib()
 {
     DLLoader<IGraphLib> *libtemp = new DLLoader<IGraphLib>(getPathLibFromWhatLib());
     _actual_graphical_lib = libtemp->getInstance("entryPoint");
-    // DLLoader<game_lib> *gametemp = new DLLoader<game_lib>(getPathGameFromWhatGame());
-    // _actual_game_lib = gametemp->getInstance("entryPoint");
+    DLLoader<game_lib> *gametemp = new DLLoader<game_lib>(getPathGameFromWhatGame());
+    _actual_game_lib = gametemp->getInstance("entryPoint");
     if (_actual_graphical_lib == NULL)
         throw MyExeption("ALED");
+    if (_actual_game_lib == NULL)
+        throw MyExeption("ALED2");
     startArcade();
 }
 
@@ -90,18 +92,18 @@ void Core::menu_loop()
 
 void Core::game_loop()
 {
-    playerEvent key = PE_NOACTION;
+    playerEvent action = PE_NOACTION;
     map_info_t mapinfo;
     
     _actual_graphical_lib->init_game();
     while (1) {
-        // key = _actual_graphical_lib->getKey();
-        // mapinfo = _actual_game_lib->game(key);
-        // _actual_graphical_lib->displayMap(mapinfo);
-        // event(key);
-        if (key == 'q')
+        action = _actual_graphical_lib->getKey();
+        event(action);
+        mapinfo = _actual_game_lib->game(action);
+        _actual_graphical_lib->displayMap(mapinfo);
+        if (action == PE_EXIT)
             return;
-        if (key == 'm') {
+        if (action == PE_RESTART) {
             menu_loop();
             return;
         }
@@ -113,23 +115,20 @@ void Core::startGame()
     _actual_graphical_lib->setGameList(gameList);
     _actual_graphical_lib->setLibList(libList);
     menu_loop();
-    delete _actual_graphical_lib;
 }
 
-void Core::event(int record_key) /* A completer surment avec un enum pour facilitée la comprension */
+void Core::event(playerEvent record_key)
 {
-    if (record_key == keyEvent::NEXT_GAME)
+    if (record_key == PE_NEXT_GAME)
         nextGame_Lib();
-    if (record_key == keyEvent::PREV_GAME)
+    if (record_key == PE_PREV_GAME)
         prevGame_Lib();
-    if (record_key == keyEvent::NEXT_LIB)
+    if (record_key == PE_NEXT_LIB)
         nextGraphique_Lib();
-    if (record_key == keyEvent::PREV_LIB)
+    if (record_key == PE_PREV_LIB)
         prevGraphique_Lib();
-    if (record_key == keyEvent::RESTART)
-        restartArcade();
-    if (record_key == keyEvent::START)
-        startGame();
+    // if (record_key == PE_RESTART)
+    //     restartArcade();
 }
 
 void Core::drawGame_Map()

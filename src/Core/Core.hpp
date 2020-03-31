@@ -14,19 +14,6 @@
 #include "MyExeption.hpp"
 #include "../../Game/IGameLib.hpp"
 #include "../../Lib/IGraphLib.hpp"
-#include "../../Lib/nCurses/Ncurses.hpp"
-
-
-enum keyEvent{
-    EXIT = -1,
-    NOTHING,
-    NEXT_GAME,
-    PREV_GAME,
-    NEXT_LIB,
-    PREV_LIB,
-    RESTART,
-    START
-};
 
 class Core {
     public:
@@ -39,7 +26,7 @@ class Core {
         void startArcade();
         void restartArcade();
         void startGame();
-        void event(int record_key);
+        void event(playerEvent record_key);
         void drawGame_Map();
         void nextGame_Lib();
         void prevGame_Lib();

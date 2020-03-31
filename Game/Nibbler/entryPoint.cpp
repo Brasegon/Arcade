@@ -14,7 +14,7 @@ game_lib *ret = nullptr;
 __attribute__((constructor))
 void enter()
 {
-	// ret = new Nibbler();
+	ret = new Nibbler();
 }
 
 __attribute__((destructor))
