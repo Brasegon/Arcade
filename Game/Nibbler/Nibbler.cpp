@@ -58,14 +58,16 @@ void Nibbler::reset_game()
         map.pixel.push_back({GREEN, bpos});
     }
     game_pause = true;
+    direction_register = PE_RIGHT;
     direction = PE_RIGHT;
     apple.eaten = false;
 }
 
 void Nibbler::generate_apple()
 {
+    position_t previous_pos = apple.pos;
     apple.pos = {rand()%20+1, rand()%20+1};
-    while(apple == body)
+    while(apple == body && apple.pos != previous_pos)
         apple.pos = {rand()%20+1, rand()%20+1};
     map.map[apple.pos.y][apple.pos.x] = 'P';
 }
@@ -87,7 +89,14 @@ map_info_t Nibbler::game(playerEvent action)
     //next movement record
     if (action == PE_UP || action == PE_DOWN ||
         action == PE_LEFT || action == PE_RIGHT) {
-        direction = action;
+        if (action == PE_UP && direction != PE_DOWN)
+            direction_register = action;
+        if (action == PE_DOWN && direction != PE_UP)
+            direction_register = action;
+        if (action == PE_LEFT && direction != PE_RIGHT)
+            direction_register = action;
+        if (action == PE_RIGHT && direction != PE_LEFT)
+            direction_register = action;
     }
     //clock managment
     if (elapsed_seconds < 0.2s)
@@ -108,6 +117,7 @@ map_info_t Nibbler::game(playerEvent action)
 
 int Nibbler::move_body()
 {
+    direction = direction_register;
     if (direction == PE_UP) {
         if (map.map[body[0].y-1][body[0].x] == 'P') {
             generate_apple();
@@ -205,5 +215,13 @@ bool operator==(position_t pos, vector<position_t> vect)
         if (pos.x == vect[i].x  && pos.y == vect[i].y)
             return true;
     }
+    return false;
+}
+
+//check if the apple is generated on the same case
+bool operator!=(position_t pos1, position_t pos2)
+{
+    if (pos1.x != pos2.x || pos1.y != pos2.y) 
+        return true;
     return false;
 }

@@ -27,7 +27,6 @@ class Core {
         void restartArcade();
         void startGame();
         void event(playerEvent record_key);
-        void drawGame_Map();
         void nextGame_Lib();
         void prevGame_Lib();
         void nextGraphique_Lib();
@@ -42,8 +41,6 @@ class Core {
         const std::map<std::string, std::string> &getLibList() const;
 
     protected:
-        std::map<std::string, std::string> _map_lib_path;
-        std::map<std::string, std::string> _map_game_path;
         std::string _string_path_lib;
         IGraphLib *_actual_graphical_lib;
         game_lib *_actual_game_lib;
@@ -51,8 +48,6 @@ class Core {
         int _what_graphical_lib;
         /*map_info_t*/ std::vector<std::string> _map;
 
-
-        const std::string libName;
         std::vector<std::string> libList;
         std::vector<std::string> gameList;
     private:

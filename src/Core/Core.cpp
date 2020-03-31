@@ -133,11 +133,6 @@ void Core::event(playerEvent record_key)
     //     restartArcade();
 }
 
-void Core::drawGame_Map()
-{
-
-}
-
 void Core::nextGame_Lib()
 {
     int max_game_lib = gameList.size() - 1;
