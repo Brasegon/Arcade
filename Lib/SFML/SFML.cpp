@@ -180,19 +180,33 @@ playerEvent SFML::getKey()
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
             return PE_UP;
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
             return PE_DOWN;
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
             return PE_LEFT;
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
             return PE_RIGHT;
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::L)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+            return PE_ACTION1;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+            return PE_ACTION2;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+            return PE_ACTION3;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::L)) {
             _window.close();
             return PE_NEXT_LIB;
         }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::K)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::K)) {
             _window.close();
             return PE_PREV_LIB;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::G)) {
+            _window.close();
+            return PE_NEXT_GAME;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) {
+            _window.close();
+            return PE_PREV_GAME;
         }
     }
 }
