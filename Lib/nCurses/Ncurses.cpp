@@ -269,6 +269,12 @@ playerEvent Ncurses::getKey()
         return PE_LEFT;
     case KEY_RIGHT:
         return PE_RIGHT;
+    case 'a':
+        return PE_ACTION1;
+    case 'z':
+        return PE_ACTION2;
+    case 'e':
+        return PE_ACTION3;
     case 'g':
         return PE_NEXT_GAME;
     case 'f':

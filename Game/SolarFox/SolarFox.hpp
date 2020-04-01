@@ -18,6 +18,12 @@ enum direction_e {
     D_RIGHT,
 };
 
+enum game_status_e {
+    PLAYING,
+    LOOSE,
+    WIN
+};
+
 typedef struct enemy_s {
     position_t pos;
     direction_e direction;
@@ -52,6 +58,9 @@ class SolarFox: public game_lib
     void reset_game();
     void enemies_movement();
     void player_movement();
+    void check_enemies_hitbox();
+    bool game_pause;
+    game_status_e game_status;
     map_info_t start_map;
     map_info_t map;
     vector<enemy_t> enemies;
@@ -59,6 +68,11 @@ class SolarFox: public game_lib
     player_t player;
     chrono::high_resolution_clock::time_point clock_start1;
     chrono::high_resolution_clock::time_point clock_start2;
+    direction_e direction;
+    direction_e direction_register;
 };
+
+bool operator!=(position_t pos1, position_t pos2);
+bool operator==(position_t pos1, position_t pos2);
 
 #endif /* !SOLARFOX_HPP_ */
