@@ -52,21 +52,7 @@ void CACA::setLibList(vector<string> list)
 
 void CACA::init_menu() 
 {
-
-}
-
-void CACA::init_game()
-{
-    caca_free_canvas(canvas);
-    caca_free_display(display);
-    game_canvas = caca_create_canvas(23, 22);
-    display = caca_create_display(game_canvas);
-}
-
-int CACA::displayMenu()
-{
-    int choose = 0;
-    int i = 0;
+    choose = 0;
 
     caca_clear_canvas(canvas);
     caca_set_color_ansi(canvas, CACA_WHITE, CACA_BLACK);
@@ -95,16 +81,47 @@ int CACA::displayMenu()
     caca_put_str(canvas, 5, 6, "EXIT");
     
     caca_put_str(canvas, (width/3) + 5, 3, "The available games are:");
-    i = 0;
+
     for (string game : gamelist) {
-        caca_put_str(canvas, (width/3) + 6, 4 + i, "| ");
-        caca_put_str(canvas, (width/3) + 7, 4 + i, game.c_str());
+        caca_put_str(canvas, (width/3) + 6, 4, "| ");
+        caca_put_str(canvas, (width/3) + 7, 4, game.c_str());
     }
+}
+
+void CACA::init_game()
+{
+    caca_free_canvas(canvas);
+    caca_free_display(display);
+    game_canvas = caca_create_canvas(23, 22);
+    display = caca_create_display(game_canvas);
+}
+
+int CACA::displayMenu()
+{
     caca_refresh_display(display);
 
-    while (1) {
         // std::cout << choose << std::endl;
-        caca_get_event(display, CACA_EVENT_KEY_PRESS, &event, 0);
+        caca_event_t event;
+        int key = 0;
+        caca_get_event(display, CACA_EVENT_KEY_PRESS, &event, -1);
+        key = caca_get_event_key_ch(&event);
+        if (key == CACA_KEY_UP) {
+            if (choose > 0)
+                choose--;
+        }
+        if (key == CACA_KEY_DOWN) {
+            if (choose < 4)
+                choose++;
+        }
+        if (key == CACA_KEY_ESCAPE || key == 'q' || (choose == 4 && key == CACA_KEY_RETURN))
+        {
+            return (-1);
+        }
+        // if (key == 13)
+        //     break;
+        // if (caca_get_event_type(&event) == CACA_EVENT_KEY_PRESS)
+        //     caca_refresh_display(display);
+
         if (choose == 0) {
             caca_clear_canvas(canvas);
             caca_set_color_ansi(canvas, CACA_WHITE, CACA_BLACK);
@@ -134,10 +151,9 @@ int CACA::displayMenu()
             caca_put_str(canvas, 5, 7, tostr(choose).c_str());
 
             caca_put_str(canvas, (width/3) + 5, 3, "The available games are:");
-            i = 0;
             for (string game : gamelist) {
-                caca_put_str(canvas, (width/3) + 6, 4 + i, "| ");
-                caca_put_str(canvas, (width/3) + 7, 4 + i, game.c_str());
+                caca_put_str(canvas, (width/3) + 6, 4, "| ");
+                caca_put_str(canvas, (width/3) + 7, 4, game.c_str());
             }
         }
         else if (choose == 1) {
@@ -169,10 +185,9 @@ int CACA::displayMenu()
             caca_put_str(canvas, 5, 7, tostr(choose).c_str());
 
             caca_put_str(canvas, (width/3) + 5, 3, "The available graphical libraries are:");
-            i = 0;
             for (string lib : liblist) {
-                caca_put_str(canvas, (width/3) + 6, 4 + i, "| ");
-                caca_put_str(canvas, (width/3) + 7, 4 + i, lib.c_str());
+                caca_put_str(canvas, (width/3) + 6, 4, "| ");
+                caca_put_str(canvas, (width/3) + 7, 4, lib.c_str());
             }
         }
         else if (choose == 2) {
@@ -280,27 +295,9 @@ int CACA::displayMenu()
             //     caca_put_str(canvas, (width/3) + 7, 4 + i, lib.c_str());
             // }
         }
-        if (caca_get_event_key_ch(&event) == CACA_KEY_UP) {
-            if (choose - 1 > -1)
-                choose = choose - 1;
-            caca_refresh_display(display);
-        }
-        if (caca_get_event_key_ch(&event) == CACA_KEY_DOWN) {
-            if (choose + 1 < 5)
-                choose = choose + 1;
-            caca_refresh_display(display);
-        }
-        if (caca_get_event_key_ch(&event) == CACA_KEY_ESCAPE)
-        {
-            caca_free_canvas(canvas);
-            exit(0);
-        }
-        // if (caca_get_event_key_ch(&event) == 13)
-        //     break;
-        // if (caca_get_event_type(&event) == CACA_EVENT_KEY_PRESS)
-        //     caca_refresh_display(display);
-    }
-    return (choose);
+
+    // }
+    return (0);
 }
 
 void CACA::displayMap(map_info_t map)
@@ -342,6 +339,7 @@ void CACA::displayMap(map_info_t map)
 
 playerEvent CACA::getKey() 
 {
+    caca_event_t event;
     caca_get_event(display, CACA_EVENT_KEY_PRESS, &event, 0);
     switch (caca_get_event_key_ch(&event))
     {
