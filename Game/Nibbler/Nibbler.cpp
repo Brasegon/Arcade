@@ -40,6 +40,14 @@ Nibbler::Nibbler()
         {8, 10},
         {7, 10},
     };
+    for (int y = 0; y < start_map.map.size(); y++) {
+        for (int x = 0; x < start_map.map.size(); x++) {
+            if (start_map.map[y][x] == 'X') {
+                start_map.pixel.push_back({WHITE, {x, y}});
+            }
+        }
+    }
+    i_pixel_head = start_map.pixel.size()+1;
     reset_game();
 }
 
@@ -52,7 +60,6 @@ void Nibbler::reset_game()
     map = start_map;
     body = start_body;
     generate_apple();
-    map.pixel.clear();
     map.pixel.push_back({RED, apple.pos});
     for (position_t bpos : body) {
         map.pixel.push_back({GREEN, bpos});
@@ -61,6 +68,7 @@ void Nibbler::reset_game()
     direction_register = PE_RIGHT;
     direction = PE_RIGHT;
     apple.eaten = false;
+    game_speed = 1;
     clock_start = chrono::high_resolution_clock::now();
 }
 
@@ -101,7 +109,13 @@ map_info_t Nibbler::game(playerEvent action)
             direction_register = action;
     }
     //clock managment
-    if (elapsed_seconds < 0.2s)
+    if (action == PE_ACTION1) {
+        if (game_speed == 1)
+            game_speed = 2;
+        else
+            game_speed = 1;
+    }
+    if (elapsed_seconds < (game_speed == 1 ? 0.2s : 0.1s))
         return map;
     else
         clock_start = chrono::high_resolution_clock::now();
@@ -110,9 +124,9 @@ map_info_t Nibbler::game(playerEvent action)
         reset_game();
     }
     //color
-    map.pixel[0].pos = apple.pos;
+    map.pixel[+i_pixel_head-1].pos = apple.pos;
     for (int i = 0; i < body.size(); i++) {
-        map.pixel[i+1].pos = body[i];
+        map.pixel[i+i_pixel_head].pos = body[i];
     }
     return map;
 }
@@ -121,25 +135,25 @@ int Nibbler::move_body()
 {
     direction = direction_register;
     if (direction == PE_UP) {
-        if (map.map[body[0].y-1][body[0].x] == 'P') {
+        if ((position_t){body[0].x, body[0].y-1} == apple.pos) {
             generate_apple();
             apple.eaten = true;
         }
     }
     if (direction == PE_DOWN) {
-        if (map.map[body[0].y+1][body[0].x] == 'P') {
+        if ((position_t){body[0].x, body[0].y+1} == apple.pos) {
             generate_apple();
             apple.eaten = true;
         }
     }
     if (direction == PE_LEFT) {
-        if (map.map[body[0].y][body[0].x-1] == 'P') {
+        if ((position_t){body[0].x-1, body[0].y} == apple.pos) {
             generate_apple();
             apple.eaten = true;
         }
     }
     if (direction == PE_RIGHT) {
-        if (map.map[body[0].y][body[0].x+1] == 'P') {
+        if ((position_t){body[0].x+1, body[0].y} == apple.pos) {
             generate_apple();
             apple.eaten = true;
         }
@@ -165,7 +179,7 @@ int Nibbler::move_body()
         //hitbox check
         if (map.map[body[0].y-1][body[0].x] == 'X')
             return 1;
-        map.map[body[0].y-1][body[0].x] = 'A';
+        map.map[body[0].y-1][body[0].x] = '^';
         body[0].y--;
     }
     if (direction == PE_DOWN) {
@@ -173,7 +187,7 @@ int Nibbler::move_body()
         if (map.map[body[0].y+1][body[0].x] == 'X')
             return 1;
         //move head
-        map.map[body[0].y+1][body[0].x] = 'V';
+        map.map[body[0].y+1][body[0].x] = 'v';
         body[0].y++;
     }
     if (direction == PE_LEFT) {
@@ -219,6 +233,13 @@ bool operator==(position_t pos, vector<position_t> vect)
         if (pos.x == vect[i].x  && pos.y == vect[i].y)
             return true;
     }
+    return false;
+}
+
+bool operator==(position_t pos1, position_t pos2)
+{
+    if (pos1.x == pos2.x && pos1.y == pos2.y) 
+        return true;
     return false;
 }
 

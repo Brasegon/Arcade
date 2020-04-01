@@ -68,7 +68,11 @@ typedef enum color_e
     RED = 1,
     GREEN,
     BLUE,
+    MAGENTA,
+    YELLOW,
+    CYAN,
     /*...*/
+    WHITE,
 } color_t;
 
 typedef struct position_s

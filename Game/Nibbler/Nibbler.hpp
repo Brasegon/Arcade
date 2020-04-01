@@ -44,10 +44,13 @@ class Nibbler: public game_lib
         playerEvent direction_register;
         chrono::high_resolution_clock::time_point clock_start;
         bool game_pause;
+        int i_pixel_head;
+        int game_speed;
 };
 
 bool operator==(apple_t apple, vector<position_t> vect);
 bool operator==(position_t, vector<position_t>);
+bool operator==(position_t pos1, position_t pos2);
 bool operator!=(position_t pos1, position_t pos2);
 
 #endif /* !NIBBLER_HPP_ */

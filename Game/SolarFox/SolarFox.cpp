@@ -105,12 +105,12 @@ void SolarFox::reset_game()
                 }
             }
             //init player
-            if (map.map[a][i] == 'A') {
+            if (map.map[a][i] == '^') {
                 player.pos = {i, a};
                 player.direction = D_UP;
                 player.shot = {{i, a}, 0, D_UP};
             }
-            if (map.map[a][i] == 'V') {
+            if (map.map[a][i] == 'v') {
                 player.pos = {i, a};
                 player.direction = D_DOWN;
                 player.shot = {{i, a}, 0, D_DOWN};
@@ -264,12 +264,12 @@ void SolarFox::player_movement()
     switch (player.direction)
     {
     case D_UP:
-        map.map[player.pos.y-1][player.pos.x] = 'A';
+        map.map[player.pos.y-1][player.pos.x] = '^';
         map.map[player.pos.y][player.pos.x] = ' ';
         player.pos.y--;
         break;
     case D_DOWN:
-        map.map[player.pos.y+1][player.pos.x] = 'V';
+        map.map[player.pos.y+1][player.pos.x] = 'v';
         map.map[player.pos.y][player.pos.x] = ' ';
         player.pos.y++;
         break;
@@ -521,7 +521,6 @@ map_info_t SolarFox::game(playerEvent action)
 }
 
 /* ----------- operators ----------- */
-
 
 bool operator!=(position_t pos1, position_t pos2)
 {
