@@ -46,24 +46,49 @@ SolarFox::~SolarFox()
 void SolarFox::reset_game()
 {
     //map generation
+    if (!enemies.empty())
+        enemies.clear();
+    if (!batteries.empty())
+        batteries.clear();
+    if (!eshots.empty())
+        eshots.clear();
     game_pause = true;
     game_status = PLAYING;
-    int id = 0;
     map = start_map;
+    direction = D_RIGHT;
+    direction_register = D_RIGHT;
     for (int a = 0; a < map.map.size(); a++) {
         for (int i = 0; i < map.map[a].size(); i++) {
             //init enemies
-            if (map.map[a][i] == 'E' || map.map[a][i] == '3') {
+            if (map.map[a][i] == 'E') {
                 if (rand()%22 == 1) {
-                    enemies.push_back({{i, a}, D_UP, 2, map.map[a][i]});
+                    enemies.push_back({{i, a}, D_UP, D_RIGHT, 2, 'E'});
                 }
                 else {
                     map.map[a][i] = ' ';
                 }
             }
-            if (map.map[a][i] == '4' || map.map[a][i] == 'Y') {
+            if (map.map[a][i] == '3') {
                 if (rand()%22 == 1) {
-                    enemies.push_back({{i, a}, D_RIGHT, 2, map.map[a][i]});
+                    enemies.push_back({{i, a}, D_UP, D_LEFT, 2, 'E'});
+                    map.map[a][i] = 'E';
+                }
+                else {
+                    map.map[a][i] = ' ';
+                }
+            }
+            if (map.map[a][i] == '4') {
+                if (rand()%22 == 1) {
+                    enemies.push_back({{i, a}, D_RIGHT, D_DOWN, 2, 'E'});
+                    map.map[a][i] = 'E';
+                }
+                else {
+                    map.map[a][i] = ' ';
+                }
+            }
+            if (map.map[a][i] == 'Y') {
+                if (rand()%22 == 1) {
+                    enemies.push_back({{i, a}, D_RIGHT, D_UP, 2, 'E'});
                     map.map[a][i] = 'E';
                 }
                 else {
@@ -73,7 +98,7 @@ void SolarFox::reset_game()
             //init batteries
             if (map.map[a][i] == 'P') {
                 if (rand()%2 == 1) {
-                    batteries.push_back({{i, a}, id++});
+                    batteries.push_back({{i, a}});
                 }
                 else {
                     map.map[a][i] = ' ';
@@ -105,21 +130,39 @@ void SolarFox::reset_game()
     clock_start1 = chrono::high_resolution_clock::now();
     clock_start2 = chrono::high_resolution_clock::now();
     clock_start3 = chrono::high_resolution_clock::now();
+    clock_start4 = chrono::high_resolution_clock::now();
+}
+
+void SolarFox::check_batteries()
+{
+    for (int i = 0; i < batteries.size(); i++) {
+        if (map.map[batteries[i].pos.y][batteries[i].pos.x] == ' ')
+            map.map[batteries[i].pos.y][batteries[i].pos.x] = 'P';
+    }
+}
+
+bool SolarFox::enemy_trail(int n)
+{
+    for (int i = 0; i < enemies.size(); i++) {
+        if (i == n)
+            continue;
+        if (enemies[i].pos == enemies[n].pos)
+            return false;
+    }
+    return true;
 }
 
 void SolarFox::enemies_movement()
 {
     for (int i = 0; i < enemies.size(); i++) {
-        if (enemies[i].life == 0) {
-            continue;
-        }
         if (enemies[i].direction == D_UP) {
             if (map.map[enemies[i].pos.y-1][enemies[i].pos.x] == 'X') {
                 enemies[i].direction = D_DOWN;
                 continue;
             }
             map.map[enemies[i].pos.y-1][enemies[i].pos.x] = enemies[i].symbol;
-            map.map[enemies[i].pos.y][enemies[i].pos.x] = ' ';
+            if (enemy_trail(i))
+                map.map[enemies[i].pos.y][enemies[i].pos.x] = ' ';
             enemies[i].pos.y--;
         }
         if (enemies[i].direction == D_DOWN) {
@@ -128,7 +171,8 @@ void SolarFox::enemies_movement()
                 continue;
             }
             map.map[enemies[i].pos.y+1][enemies[i].pos.x] = enemies[i].symbol;
-            map.map[enemies[i].pos.y][enemies[i].pos.x] = ' ';
+            if (enemy_trail(i))
+                map.map[enemies[i].pos.y][enemies[i].pos.x] = ' ';
             enemies[i].pos.y++;
         }
         if (enemies[i].direction == D_LEFT) {
@@ -137,7 +181,8 @@ void SolarFox::enemies_movement()
                 continue;
             }
             map.map[enemies[i].pos.y][enemies[i].pos.x-1] = enemies[i].symbol;
-            map.map[enemies[i].pos.y][enemies[i].pos.x] = ' ';
+            if (enemy_trail(i))
+                map.map[enemies[i].pos.y][enemies[i].pos.x] = ' ';
             enemies[i].pos.x--;
         }
         if (enemies[i].direction == D_RIGHT) {
@@ -146,8 +191,28 @@ void SolarFox::enemies_movement()
                 continue;
             }
             map.map[enemies[i].pos.y][enemies[i].pos.x+1] = enemies[i].symbol;
-            map.map[enemies[i].pos.y][enemies[i].pos.x] = ' ';
+            if (enemy_trail(i))
+                map.map[enemies[i].pos.y][enemies[i].pos.x] = ' ';
             enemies[i].pos.x++;
+        }
+        //tir random
+        if (rand()%10 == 0) {
+            if (enemies[i].canon_orientation == D_UP && map.map[enemies[i].pos.y-1][enemies[i].pos.x] != 'T') {
+                eshots.push_back({{enemies[i].pos.x, enemies[i].pos.y-1}, 0, enemies[i].canon_orientation});
+                map.map[eshots.back().pos.y][eshots.back().pos.x] = '6';
+            }
+            if (enemies[i].canon_orientation == D_DOWN && map.map[enemies[i].pos.y+1][enemies[i].pos.x] != 'T') {
+                eshots.push_back({{enemies[i].pos.x, enemies[i].pos.y+1}, 0, enemies[i].canon_orientation});
+                map.map[eshots.back().pos.y][eshots.back().pos.x] = '6';
+            }
+            if (enemies[i].canon_orientation == D_LEFT && map.map[enemies[i].pos.y][enemies[i].pos.x-1] != 'T') {
+                eshots.push_back({{enemies[i].pos.x-1, enemies[i].pos.y}, 0, enemies[i].canon_orientation});
+                map.map[eshots.back().pos.y][eshots.back().pos.x] = '6';
+            }
+            if (enemies[i].canon_orientation == D_RIGHT && map.map[enemies[i].pos.y][enemies[i].pos.x+1] != 'T') {
+                eshots.push_back({{enemies[i].pos.x+1, enemies[i].pos.y}, 0, enemies[i].canon_orientation});
+                map.map[eshots.back().pos.y][eshots.back().pos.x] = '6';
+            }
         }
     }
     check_enemies_hitbox();
@@ -224,6 +289,7 @@ void SolarFox::player_movement()
     for (int i = 0; i < batteries.size(); i++) {
         if (batteries[i].pos == player.pos) {
             batteries.erase(batteries.begin()+i);
+            i--;
         }
     }
     if (batteries.empty()) {
@@ -327,6 +393,13 @@ void SolarFox::pshot_movement()
     for (int i = 0; i < batteries.size(); i++) {
         if (player.shot.pos == batteries[i].pos) {
             batteries.erase(batteries.begin()+i);
+            i--;
+        }
+    }
+    for (int i = 0; i < eshots.size(); i++) {
+        if (player.shot.pos == eshots[i].pos) {
+            eshots.erase(eshots.begin()+i);
+            i--;
         }
     }
     player.shot.distance++;
@@ -350,8 +423,44 @@ void SolarFox::enemies_check()
 {
     for (int i = 0; i < enemies.size(); i++) {
         if (enemies[i].life <= 0) {
-            enemies.erase(enemies.begin()+i);
             map.map[enemies[i].pos.y][enemies[i].pos.x] = ' ';
+            enemies.erase(enemies.begin()+i);
+            i--;
+        }
+    }
+}
+
+void SolarFox::eshot_movement()
+{
+    for (int i = 0; i < eshots.size(); i++) {
+        if (eshots[i].pos != enemies);
+            map.map[eshots[i].pos.y][eshots[i].pos.x] = ' ';
+        if (eshots[i].direction == D_UP) {
+            eshots[i].pos.y--;
+        }
+        if (eshots[i].direction == D_DOWN) {
+            eshots[i].pos.y++;
+        }
+        if (eshots[i].direction == D_LEFT) {
+            eshots[i].pos.x--;
+        }
+        if (eshots[i].direction == D_RIGHT) {
+            eshots[i].pos.x++;
+        }
+        if (map.map[eshots[i].pos.y][eshots[i].pos.x] == 'X') {
+            eshots.erase(eshots.begin()+i);
+            i--;
+            continue;
+        }
+        map.map[eshots[i].pos.y][eshots[i].pos.x] = '6';
+    }
+}
+
+void SolarFox::hit_check()
+{
+    for (int i = 0; i < eshots.size(); i++) {
+        if (eshots[i].pos == player.pos) {
+            game_status = LOOSE;
         }
     }
 }
@@ -361,6 +470,9 @@ map_info_t SolarFox::game(playerEvent action)
     chrono::high_resolution_clock::time_point clock_end;
     chrono::duration<double> elapsed_seconds;
 
+    //restart
+    if (action == PE_RESTART)
+        reset_game();
     //pause
     if (game_pause) {
         if (action != PE_UP && action != PE_DOWN &&
@@ -369,6 +481,7 @@ map_info_t SolarFox::game(playerEvent action)
         else
             game_pause = false;
     }
+    check_batteries();
     clock_end = chrono::high_resolution_clock::now();
     //clock enemies
     elapsed_seconds = clock_end-clock_start1;
@@ -391,6 +504,13 @@ map_info_t SolarFox::game(playerEvent action)
         enemies_check();
         clock_start3 = chrono::high_resolution_clock::now();
     }
+    //clock enemiesshot
+    elapsed_seconds = clock_end-clock_start4;
+    if (elapsed_seconds > 0.1s) {
+        eshot_movement();
+        hit_check();
+        clock_start4 = chrono::high_resolution_clock::now();
+    }
     if (game_status == LOOSE) {
         reset_game();
     }
@@ -401,6 +521,7 @@ map_info_t SolarFox::game(playerEvent action)
 }
 
 /* ----------- operators ----------- */
+
 
 bool operator!=(position_t pos1, position_t pos2)
 {
@@ -414,4 +535,13 @@ bool operator==(position_t pos1, position_t pos2)
     if (pos1.x == pos2.x && pos1.y == pos2.y) 
         return true;
     return false;
+}
+
+bool operator!=(position_t pos, vector<enemy_t> enemies)
+{
+    for (int i = 0; i < enemies.size(); i++) {
+        if (pos == enemies[i].pos)
+            return false;
+    }
+    return true;
 }

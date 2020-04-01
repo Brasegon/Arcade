@@ -10,6 +10,7 @@
 
 #include "../IGameLib.hpp"
 #include <chrono>
+#include <thread>
 
 enum direction_e {
     D_UP,
@@ -27,13 +28,13 @@ enum game_status_e {
 typedef struct enemy_s {
     position_t pos;
     direction_e direction;
+    direction_e canon_orientation;
     int life;
     char symbol;
 } enemy_t;
 
 typedef struct battery_s {
     position_t pos;
-    int id;
 } battery_t;
 
 typedef struct shot_s {
@@ -57,6 +58,8 @@ class SolarFox: public game_lib
 
     private:
     void reset_game();
+    void check_batteries();
+    bool enemy_trail(int n);
     void enemies_movement();
     void movement_register(playerEvent action);
     void player_movement();
@@ -64,21 +67,26 @@ class SolarFox: public game_lib
     void playershot_register(playerEvent action);
     void pshot_movement();
     void enemies_check();
+    void eshot_movement();
+    void hit_check();
     bool game_pause;
     game_status_e game_status;
     map_info_t start_map;
     map_info_t map;
     vector<enemy_t> enemies;
+    vector<shot_t> eshots;
     vector<battery_t> batteries;
     player_t player;
     chrono::high_resolution_clock::time_point clock_start1;
     chrono::high_resolution_clock::time_point clock_start2;
     chrono::high_resolution_clock::time_point clock_start3;
+    chrono::high_resolution_clock::time_point clock_start4;
     direction_e direction;
     direction_e direction_register;
 };
 
 bool operator!=(position_t pos1, position_t pos2);
 bool operator==(position_t pos1, position_t pos2);
+bool operator!=(position_t pos, vector<enemy_t> enemies);
 
 #endif /* !SOLARFOX_HPP_ */
