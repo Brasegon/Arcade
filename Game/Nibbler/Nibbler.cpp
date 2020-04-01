@@ -198,6 +198,8 @@ int Nibbler::move_body()
     return 0;
 }
 
+/* ----------- operators ----------- */
+
 //check if the apple appeared on an occupied case
 bool operator==(apple_t apple, vector<position_t> vect)
 {

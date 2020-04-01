@@ -39,6 +39,7 @@ typedef struct battery_s {
 typedef struct shot_s {
     position_t pos;
     int distance;
+    direction_e direction;
 } shot_t;
 
 typedef struct player_s {
@@ -57,8 +58,12 @@ class SolarFox: public game_lib
     private:
     void reset_game();
     void enemies_movement();
+    void movement_register(playerEvent action);
     void player_movement();
     void check_enemies_hitbox();
+    void playershot_register(playerEvent action);
+    void pshot_movement();
+    void enemies_check();
     bool game_pause;
     game_status_e game_status;
     map_info_t start_map;
@@ -68,6 +73,7 @@ class SolarFox: public game_lib
     player_t player;
     chrono::high_resolution_clock::time_point clock_start1;
     chrono::high_resolution_clock::time_point clock_start2;
+    chrono::high_resolution_clock::time_point clock_start3;
     direction_e direction;
     direction_e direction_register;
 };
