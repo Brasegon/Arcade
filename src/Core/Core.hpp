@@ -27,7 +27,7 @@ class Core {
         void restartArcade();
         void startGame();
         void event(playerEvent record_key);
-        void drawGame_Map();
+        // void drawGame_Map();
         void nextGame_Lib();
         void prevGame_Lib();
         void nextGraphique_Lib();

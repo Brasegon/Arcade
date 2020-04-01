@@ -22,12 +22,16 @@ clean:
 	make clean -C ./Lib/nCurses
 	make clean -C ./Lib/SFML
 	make clean -C ./Lib/libcaca
+	make clean -C ./Game/Nibbler
+	make clean -C ./Game/SolarFox
 
 fclean: clean
 	$(RM) $(NAME)
 	make fclean -C ./Lib/nCurses
 	make fclean -C ./Lib/SFML
 	make fclean -C ./Lib/libcaca
+	make fclean -C ./Game/Nibbler
+	make fclean -C ./Game/SolarFox
 
 re: fclean all
 

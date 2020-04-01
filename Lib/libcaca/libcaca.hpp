@@ -25,10 +25,15 @@ class CACA : public IGraphLib
         playerEvent getKey();
 
         caca_canvas_t *canvas;
+        caca_canvas_t *game_canvas;
         caca_display_t *display;
         caca_event_t event;
+        caca_font_t *font;
         int width;
         int height;
+
+        vector<string> gamelist;
+        vector<string> liblist;
 
     protected:
     private:
