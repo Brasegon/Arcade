@@ -79,10 +79,25 @@ void Core::menu_loop()
 
     while (1) {
         ret = _actual_graphical_lib->displayMenu();
+        // std::cout << ret << std::endl;
         if (ret == -1) {
             exit(0);
         }
         if (ret == 1) {
+            // _what_game = 0;
+            // if (_actual_game_lib != NULL)
+            //     delete _actual_game_lib;
+            // DLLoader<game_lib> *temp = new DLLoader<game_lib>(getPathGameFromWhatGame());
+            // _actual_game_lib = temp->getInstance("game", 40, 40);
+            game_loop();
+            return;
+        }
+        if (ret == 2) {
+            // _what_game = 1;
+            // if (_actual_game_lib != NULL)
+            //     delete _actual_game_lib;
+            // DLLoader<game_lib> *temp = new DLLoader<game_lib>(getPathGameFromWhatGame());
+            // _actual_game_lib = temp->getInstance("game", 40, 40);
             game_loop();
             return;
         }

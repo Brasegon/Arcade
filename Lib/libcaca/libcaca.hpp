@@ -8,6 +8,8 @@
 #ifndef LIBCACA_HPP_
 #define LIBCACA_HPP_
 
+#include <sstream>
+#include <string>
 #include "../IGraphLib.hpp"
 #include "caca/caca.h"
 
@@ -30,6 +32,7 @@ class CACA : public IGraphLib
         caca_font_t *font;
         int width;
         int height;
+        std::string player_name;
 
         vector<string> gamelist;
         vector<string> liblist;
