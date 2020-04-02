@@ -30,7 +30,8 @@ class Nibbler: public game_lib
         Nibbler();
         ~Nibbler();
         map_info_t game(playerEvent action);
-    protected:
+        void *handle;
+
     private:
         int move_body();
         void reset_game();

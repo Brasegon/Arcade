@@ -17,22 +17,22 @@ SolarFox::SolarFox()
     "X4444444444444444444443X",
     "XETT TT TT TT TT TT TT3X",
     "XETT TT TT TT TT TT TT3X",
-    "XE  P  P  P  P  P  P  3X",
+    "XE  B  B  B  B  B  B  3X",
     "XETT TT TT TT TT TT TT3X",
     "XETT TT TT TT TT TT TT3X",
-    "XE  P  P  P  P  P  P  3X",
+    "XE  B  B  B  B  B  B  3X",
     "XETT TT TT TT TT TT TT3X",
     "XETT TT TT TT TT TT TT3X",
-    "XE  P  P  >  P  P  P  3X",
+    "XE  B  B  >  B  B  B  3X",
     "XETT TT TT TT TT TT TT3X",
     "XETT TT TT TT TT TT TT3X",
-    "XE  P  P  P  P  P  P  3X",
+    "XE  B  B  B  B  B  B  3X",
     "XETT TT TT TT TT TT TT3X",
     "XETT TT TT TT TT TT TT3X",
-    "XE  P  P  P  P  P  P  3X",
+    "XE  B  B  B  B  B  B  3X",
     "XETT TT TT TT TT TT TT3X",
     "XETT TT TT TT TT TT TT3X",
-    "XE  P  P  P  P  P  P  3X",
+    "XE  B  B  B  B  B  B  3X",
     "XETT TT TT TT TT TT TT3X",
     "XETT TT TT TT TT TT TT3X",
     "XEYYYYYYYYYYYYYYYYYYYYYX",
@@ -110,7 +110,7 @@ void SolarFox::reset_game()
                 }
             }
             //init batteries
-            if (map.map[a][i] == 'P') {
+            if (map.map[a][i] == 'B') {
                 if (rand()%2 == 1) {
                     batteries.push_back({{i, a}});
                 }
@@ -161,7 +161,7 @@ void SolarFox::generate_colors()
             // if (c == ' ') {
             //     map.pixel.push_back({WHITE, {x, y}});
             // }
-            if (c == 'P') {
+            if (c == 'B') {
                 map.pixel.push_back({YELLOW, {x, y}});
             }
             if (c == 'E') {
@@ -258,8 +258,8 @@ void SolarFox::check_batteries()
     char c = 0;
     for (int i = 0; i < batteries.size(); i++) {
         c = map.map[batteries[i].pos.y][batteries[i].pos.x];
-        if (c != 'P' && c != '6')
-            map.map[batteries[i].pos.y][batteries[i].pos.x] = 'P';
+        if (c != 'B' && c != '6')
+            map.map[batteries[i].pos.y][batteries[i].pos.x] = 'B';
     }
 }
 

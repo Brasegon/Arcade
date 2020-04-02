@@ -55,6 +55,7 @@ class SolarFox: public game_lib
         SolarFox();
         ~SolarFox();
         map_info_t game(playerEvent action);
+        void *handle;
 
     private:
     void reset_game();
