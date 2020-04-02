@@ -58,18 +58,21 @@ class SolarFox: public game_lib
 
     private:
     void reset_game();
+    void generate_colors();
     void check_batteries();
     bool enemy_trail(int n);
     void enemies_movement();
     void movement_register(playerEvent action);
     void player_movement();
-    void check_enemies_hitbox();
+    void check_all_hitboxes();
     void playershot_register(playerEvent action);
     void pshot_movement();
     void enemies_check();
     void eshot_movement();
+    bool eshot_trail(int n);
     void hit_check();
     bool game_pause;
+    int i_border_colors;
     game_status_e game_status;
     map_info_t start_map;
     map_info_t map;

@@ -9,6 +9,8 @@
 
 SolarFox::SolarFox()
 {
+    char c = 0;
+
     srand(time(NULL));
     start_map.map = {
     "XXXXXXXXXXXXXXXXXXXXXXXX",
@@ -36,6 +38,18 @@ SolarFox::SolarFox()
     "XEYYYYYYYYYYYYYYYYYYYYYX",
     "XXXXXXXXXXXXXXXXXXXXXXXX",
     };
+    for (int y = 0; y < start_map.map.size(); y++) {
+        for (int x = 0; x < start_map.map.size(); x++) {
+            c = start_map.map[y][x];
+            if (c == 'X') {
+                start_map.pixel.push_back({CYAN, {x, y}});
+            }
+            if (c == 'T') {
+                start_map.pixel.push_back({CYAN, {x, y}});
+            }
+        }
+    }
+    i_border_colors = start_map.pixel.size();
     reset_game();
 }
 
@@ -127,10 +141,42 @@ void SolarFox::reset_game()
             }
         }
     }
+    generate_colors();
     clock_start1 = chrono::high_resolution_clock::now();
     clock_start2 = chrono::high_resolution_clock::now();
     clock_start3 = chrono::high_resolution_clock::now();
     clock_start4 = chrono::high_resolution_clock::now();
+}
+
+void SolarFox::generate_colors()
+{
+    char c = 0;
+
+    if (map.pixel.size() > i_border_colors)
+        map.pixel.erase(map.pixel.begin()+i_border_colors, map.pixel.end());
+    for (int y = 0; y < map.map.size(); y++) {
+        for (int x = 0; x < map.map.size(); x++) {
+            c = map.map[y][x];
+            if (c == ' ') {
+                map.pixel.push_back({WHITE, {x, y}});
+            }
+            if (c == 'P') {
+                map.pixel.push_back({YELLOW, {x, y}});
+            }
+            if (c == 'E') {
+                map.pixel.push_back({MAGENTA, {x, y}});
+            }
+            if (c == '6') {
+                map.pixel.push_back({RED, {x, y}});
+            }
+            if (c == 'o') {
+                map.pixel.push_back({BLUE, {x, y}});
+            }
+            // if (x == player.pos.x && y == player.pos.y) {
+            //     map.pixel.push_back({GREEN, {x, y}});
+            // }
+        }
+    }
 }
 
 void SolarFox::check_batteries()
@@ -196,7 +242,7 @@ void SolarFox::enemies_movement()
             enemies[i].pos.x++;
         }
         //tir random
-        if (rand()%10 == 0) {
+        if (rand()%4 == 0) {
             if (enemies[i].canon_orientation == D_UP && map.map[enemies[i].pos.y-1][enemies[i].pos.x] != 'T') {
                 eshots.push_back({{enemies[i].pos.x, enemies[i].pos.y-1}, 0, enemies[i].canon_orientation});
                 map.map[eshots.back().pos.y][eshots.back().pos.x] = '6';
@@ -215,7 +261,6 @@ void SolarFox::enemies_movement()
             }
         }
     }
-    check_enemies_hitbox();
 }
 
 void SolarFox::player_movement()
@@ -296,7 +341,6 @@ void SolarFox::player_movement()
         game_status = WIN;
         return;
     }
-    check_enemies_hitbox();
 }
 
 void SolarFox::movement_register(playerEvent action)
@@ -315,10 +359,16 @@ void SolarFox::movement_register(playerEvent action)
     }
 }
 
-void SolarFox::check_enemies_hitbox()
+void SolarFox::check_all_hitboxes()
 {
     for (int i = 0; i < enemies.size(); i++) {
         if (enemies[i].pos == player.pos) {
+            game_status = LOOSE;
+            return;
+        }
+    }
+    for (int i = 0; i < eshots.size(); i++) {
+        if (eshots[i].pos == player.pos) {
             game_status = LOOSE;
             return;
         }
@@ -430,10 +480,25 @@ void SolarFox::enemies_check()
     }
 }
 
+bool SolarFox::eshot_trail(int n)
+{
+    for (int i = 0; i < eshots.size(); i++) {
+        if (i == n)
+            continue;
+        if (eshots[i].pos == eshots[n].pos)
+            return false;
+    }
+    if (eshots[n].pos != enemies)
+        return true;
+    if (eshots[n].pos == player.pos)
+        return false;
+    return true;
+}
+
 void SolarFox::eshot_movement()
 {
     for (int i = 0; i < eshots.size(); i++) {
-        if (eshots[i].pos != enemies);
+        if (eshot_trail(i));
             map.map[eshots[i].pos.y][eshots[i].pos.x] = ' ';
         if (eshots[i].direction == D_UP) {
             eshots[i].pos.y--;
@@ -453,15 +518,6 @@ void SolarFox::eshot_movement()
             continue;
         }
         map.map[eshots[i].pos.y][eshots[i].pos.x] = '6';
-    }
-}
-
-void SolarFox::hit_check()
-{
-    for (int i = 0; i < eshots.size(); i++) {
-        if (eshots[i].pos == player.pos) {
-            game_status = LOOSE;
-        }
     }
 }
 
@@ -489,6 +545,7 @@ map_info_t SolarFox::game(playerEvent action)
         enemies_movement();
         clock_start1 = chrono::high_resolution_clock::now();
     }
+    check_all_hitboxes();
     movement_register(action);
     //clock player
     elapsed_seconds = clock_end-clock_start2;
@@ -496,6 +553,7 @@ map_info_t SolarFox::game(playerEvent action)
         player_movement();
         clock_start2 = chrono::high_resolution_clock::now();
     }
+    check_all_hitboxes();
     playershot_register(action);
     //clock playershot
     elapsed_seconds = clock_end-clock_start3;
@@ -508,15 +566,16 @@ map_info_t SolarFox::game(playerEvent action)
     elapsed_seconds = clock_end-clock_start4;
     if (elapsed_seconds > 0.1s) {
         eshot_movement();
-        hit_check();
         clock_start4 = chrono::high_resolution_clock::now();
     }
+    check_all_hitboxes();
     if (game_status == LOOSE) {
         reset_game();
     }
     if (game_status == WIN) {
         reset_game();
     }
+    generate_colors();
     return map;
 }
 
