@@ -33,6 +33,7 @@ CACA::CACA()
 void CACA::setGameList(vector<string> list)
 {
     char gameName[50];
+    gamelist.clear();
     for (string game : list) {
         game.erase(game.end()-3, game.end());
         sscanf(game.c_str(), "./Game/lib_arcade_%s", gameName);
@@ -44,6 +45,7 @@ void CACA::setGameList(vector<string> list)
 void CACA::setLibList(vector<string> list)
 {
     char libName[50];
+    liblist.clear();
     for (string lib : list) {
         lib.erase(lib.end()-3, lib.end());
         sscanf(lib.c_str(), "./Lib/lib_arcade_%s", libName);
@@ -656,30 +658,48 @@ void CACA::displayMap(map_info_t map)
             switch (map.map[y][x]) {
             case 'X':
                 caca_set_color_ansi(game_canvas, CACA_LIGHTCYAN, CACA_BLACK);
+                caca_put_char(game_canvas, x, y, map.map[y][x]);
                 break;
             case 'P':
                 caca_set_color_ansi(game_canvas, CACA_RED, CACA_BLACK);
+                caca_put_char(game_canvas, x, y, map.map[y][x]);
                 break;
             case 'O':
                 caca_set_color_ansi(game_canvas, CACA_GREEN, CACA_BLACK);
+                caca_put_char(game_canvas, x, y, map.map[y][x]);
                 break;
             case '<':
                 caca_set_color_ansi(game_canvas, CACA_GREEN, CACA_BLACK);
+                caca_put_char(game_canvas, x, y, map.map[y][x]);
                 break;
-            case 'A':
+            case '^':
                 caca_set_color_ansi(game_canvas, CACA_GREEN, CACA_BLACK);
+                caca_put_char(game_canvas, x, y, map.map[y][x]);
                 break;
             case '>':
                 caca_set_color_ansi(game_canvas, CACA_GREEN, CACA_BLACK);
+                caca_put_char(game_canvas, x, y, map.map[y][x]);
                 break;
-            case 'V':
+            case 'v':
                 caca_set_color_ansi(game_canvas, CACA_GREEN, CACA_BLACK);
+                caca_put_char(game_canvas, x, y, map.map[y][x]);
+                break;
+            case '+':
+                caca_set_color_ansi(game_canvas, CACA_WHITE, CACA_BLACK);
+                caca_put_str(game_canvas, x, y, "+");
+                break;
+            case '/':
+                caca_set_color_ansi(game_canvas, CACA_WHITE, CACA_BLACK);
+                caca_put_char(game_canvas, x, y, '|');
+            case 'T':
+                caca_set_color_ansi(game_canvas, CACA_BLACK, CACA_BLACK);
+                caca_put_str(game_canvas, x, y, "T");
                 break;
             default:
                 caca_set_color_ansi(game_canvas, CACA_WHITE, CACA_BLACK);
+                caca_put_char(game_canvas, x, y, map.map[y][x]);
                 break;
             }
-            caca_put_char(game_canvas, x, y, map.map[y][x]);
         }
     }
     caca_refresh_display(display);
