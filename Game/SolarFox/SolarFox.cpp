@@ -42,10 +42,10 @@ SolarFox::SolarFox()
         for (int x = 0; x < start_map.map.size(); x++) {
             c = start_map.map[y][x];
             if (c == 'X') {
-                start_map.pixel.push_back({CYAN, {x, y}});
+                start_map.pixel.push_back({BLACK, {x, y}});
             }
             if (c == 'T') {
-                start_map.pixel.push_back({CYAN, {x, y}});
+                start_map.pixel.push_back({BLACK, {x, y}});
             }
         }
     }
@@ -141,6 +141,7 @@ void SolarFox::reset_game()
             }
         }
     }
+    generate_path();
     generate_colors();
     clock_start1 = chrono::high_resolution_clock::now();
     clock_start2 = chrono::high_resolution_clock::now();
@@ -157,9 +158,9 @@ void SolarFox::generate_colors()
     for (int y = 0; y < map.map.size(); y++) {
         for (int x = 0; x < map.map.size(); x++) {
             c = map.map[y][x];
-            if (c == ' ') {
-                map.pixel.push_back({WHITE, {x, y}});
-            }
+            // if (c == ' ') {
+            //     map.pixel.push_back({WHITE, {x, y}});
+            // }
             if (c == 'P') {
                 map.pixel.push_back({YELLOW, {x, y}});
             }
@@ -172,17 +173,92 @@ void SolarFox::generate_colors()
             if (c == 'o') {
                 map.pixel.push_back({BLUE, {x, y}});
             }
-            // if (x == player.pos.x && y == player.pos.y) {
-            //     map.pixel.push_back({GREEN, {x, y}});
-            // }
+            if (x == player.pos.x && y == player.pos.y) {
+                map.pixel.push_back({GREEN, {x, y}});
+            }
+        }
+    }
+}
+
+bool is_walkable(char c)
+{
+    if (c == 'X' || c == 'T')
+        return false;
+    return true;
+}
+
+void SolarFox::generate_path()
+{
+                    /*  + - / { } [ ] ( ) : ;  */
+                    /*  ╋ ━ ┃ ┗ ┛ ┏ ┓ ┣ ┫ ┻ ┳  */
+    char m;
+    char u;
+    char d;
+    char l;
+    char r;
+    for (int y = 1; y < map.map.size()-1; y++) {
+        for (int x = 1; x < map.map.size()-1; x++) {
+            m = map.map[y][x];
+            u = map.map[y-1][x];
+            d = map.map[y+1][x];
+            l = map.map[y][x-1];
+            r = map.map[y][x+1];
+            if (m == ' ') {
+                if (is_walkable(u) && is_walkable(d) && is_walkable(l) && is_walkable(r)) {
+                    map.map[y][x] = '+';
+                    continue;
+                }
+                if (!is_walkable(u) && !is_walkable(d) && is_walkable(l) && is_walkable(r)) {
+                    map.map[y][x] = '-';
+                    continue;
+                }
+                if (is_walkable(u) && is_walkable(d) && !is_walkable(l) && !is_walkable(r)) {
+                    map.map[y][x] = '/';
+                    continue;
+                }
+                if (is_walkable(u) && !is_walkable(d) && !is_walkable(l) && is_walkable(r)) {
+                    map.map[y][x] = '{';
+                    continue;
+                }
+                if (is_walkable(u) && !is_walkable(d) && is_walkable(l) && !is_walkable(r)) {
+                    map.map[y][x] = '}';
+                    continue;
+                }
+                if (!is_walkable(u) && is_walkable(d) && !is_walkable(l) && is_walkable(r)) {
+                    map.map[y][x] = '[';
+                    continue;
+                }
+                if (!is_walkable(u) && is_walkable(d) && is_walkable(l) && !is_walkable(r)) {
+                    map.map[y][x] = ']';
+                    continue;
+                }
+                if (is_walkable(u) && is_walkable(d) && !is_walkable(l) && is_walkable(r)) {
+                    map.map[y][x] = '(';
+                    continue;
+                }
+                if (is_walkable(u) && is_walkable(d) && is_walkable(l) && !is_walkable(r)) {
+                    map.map[y][x] = ')';
+                    continue;
+                }
+                if (is_walkable(u) && !is_walkable(d) && is_walkable(l) && is_walkable(r)) {
+                    map.map[y][x] = ':';
+                    continue;
+                }
+                if (!is_walkable(u) && is_walkable(d) && is_walkable(l) && is_walkable(r)) {
+                    map.map[y][x] = ';';
+                    continue;
+                }
+            }
         }
     }
 }
 
 void SolarFox::check_batteries()
 {
+    char c = 0;
     for (int i = 0; i < batteries.size(); i++) {
-        if (map.map[batteries[i].pos.y][batteries[i].pos.x] == ' ')
+        c = map.map[batteries[i].pos.y][batteries[i].pos.x];
+        if (c != 'P' && c != '6')
             map.map[batteries[i].pos.y][batteries[i].pos.x] = 'P';
     }
 }
@@ -361,16 +437,40 @@ void SolarFox::movement_register(playerEvent action)
 
 void SolarFox::check_all_hitboxes()
 {
+    // enemies hitbox
     for (int i = 0; i < enemies.size(); i++) {
         if (enemies[i].pos == player.pos) {
             game_status = LOOSE;
             return;
         }
     }
+    // enemies shots hitbox
     for (int i = 0; i < eshots.size(); i++) {
         if (eshots[i].pos == player.pos) {
             game_status = LOOSE;
             return;
+        }
+    }
+    // playershot hitbox
+    if (player.shot.distance > 0) {
+        for (int i = 0; i < batteries.size(); i++) {
+            if (player.shot.pos == batteries[i].pos) {
+                batteries.erase(batteries.begin()+i);
+                i--;
+            }
+        }
+        for (int i = 0; i < eshots.size(); i++) {
+            if (player.shot.pos == eshots[i].pos) {
+                eshots.erase(eshots.begin()+i);
+                i--;
+            }
+        }
+        for (int i = 0; i < enemies.size(); i++) {
+            if (player.shot.pos == enemies[i].pos) {
+                enemies[i].life--;
+                player.shot.distance = 0;
+                return;
+            }
         }
     }
 }
@@ -440,26 +540,7 @@ void SolarFox::pshot_movement()
     if (player.shot.direction == D_RIGHT) {
         player.shot.pos.x++;
     }
-    for (int i = 0; i < batteries.size(); i++) {
-        if (player.shot.pos == batteries[i].pos) {
-            batteries.erase(batteries.begin()+i);
-            i--;
-        }
-    }
-    for (int i = 0; i < eshots.size(); i++) {
-        if (player.shot.pos == eshots[i].pos) {
-            eshots.erase(eshots.begin()+i);
-            i--;
-        }
-    }
     player.shot.distance++;
-    for (int i = 0; i < enemies.size(); i++) {
-        if (player.shot.pos == enemies[i].pos) {
-            enemies[i].life--;
-            player.shot.distance = 0;
-            return;
-        }
-    }
     if (player.shot.distance > 10
     || map.map[player.shot.pos.y][player.shot.pos.x] == 'X'
     || map.map[player.shot.pos.y][player.shot.pos.x] == 'T') {
@@ -538,6 +619,7 @@ map_info_t SolarFox::game(playerEvent action)
             game_pause = false;
     }
     check_batteries();
+    enemies_check();
     clock_end = chrono::high_resolution_clock::now();
     //clock enemies
     elapsed_seconds = clock_end-clock_start1;
@@ -559,7 +641,6 @@ map_info_t SolarFox::game(playerEvent action)
     elapsed_seconds = clock_end-clock_start3;
     if (elapsed_seconds > 0.03s && player.shot.distance != 0) {
         pshot_movement();
-        enemies_check();
         clock_start3 = chrono::high_resolution_clock::now();
     }
     //clock enemiesshot
@@ -575,6 +656,7 @@ map_info_t SolarFox::game(playerEvent action)
     if (game_status == WIN) {
         reset_game();
     }
+    generate_path();
     generate_colors();
     return map;
 }

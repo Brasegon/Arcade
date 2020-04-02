@@ -32,6 +32,7 @@ Ncurses::Ncurses()
     init_pair(MAGENTA, COLOR_MAGENTA, COLOR_MAGENTA);
     init_pair(YELLOW, COLOR_YELLOW, COLOR_YELLOW);
     init_pair(CYAN, COLOR_CYAN, COLOR_CYAN);
+    init_pair(BLACK, COLOR_BLACK, COLOR_BLACK);
     init_pair(WHITE, COLOR_WHITE, COLOR_WHITE);
     init_pair(WHITE+1, COLOR_RED, COLOR_BLACK);
     init_pair(WHITE+2, COLOR_GREEN, COLOR_BLACK);
@@ -251,6 +252,8 @@ int Ncurses::displayMenu()
 // affiche la map envoyée par le jeu
 void Ncurses::displayMap(map_info_t map)
 {
+                    /*  + - / { } [ ] ( ) : ;  */
+                    /*  ╋ ━ ┃ ┗ ┛ ┏ ┓ ┣ ┫ ┻ ┳  */
     int i = 0;
     char c = 0;
     erase();
@@ -258,6 +261,45 @@ void Ncurses::displayMap(map_info_t map)
         mvaddstr(1+i, 1, line.c_str());
         i++;
     }
+    for (int y = 1; y < map.map.size()-1; y++) {
+        for (int x = 1; x < map.map.size()-1; x++) {
+            c = map.map[y][x];
+            if (c == '+') {
+                mvaddch(y+1, x+1, ACS_PLUS);
+            }
+            if (c == '-') {
+                mvaddch(y+1, x+1, ACS_HLINE);
+            }
+            if (c == '/') {
+                mvaddch(y+1, x+1, ACS_VLINE);
+            }
+            if (c == '{') {
+                mvaddch(y+1, x+1, ACS_LLCORNER);
+            }
+            if (c == '}') {
+                mvaddch(y+1, x+1, ACS_LRCORNER);
+            }
+            if (c == '[') {
+                mvaddch(y+1, x+1, ACS_ULCORNER);
+            }
+            if (c == ']') {
+                mvaddch(y+1, x+1, ACS_URCORNER);
+            }
+            if (c == '(') {
+                mvaddch(y+1, x+1, ACS_LTEE);
+            }
+            if (c == ')') {
+                mvaddch(y+1, x+1, ACS_RTEE);
+            }
+            if (c == ':') {
+                mvaddch(y+1, x+1, ACS_BTEE);
+            }
+            if (c == ';') {
+                mvaddch(y+1, x+1, ACS_TTEE);
+            }
+        }
+    }
+
     for (pixel_t pixel : map.pixel) {
         c = map.map[pixel.pos.y][pixel.pos.x];
         if ((c == '^' ||c == 'v'||c == '<' ||c == '>') && pixel.color == GREEN) {

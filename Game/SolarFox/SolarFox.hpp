@@ -59,6 +59,7 @@ class SolarFox: public game_lib
     private:
     void reset_game();
     void generate_colors();
+    void generate_path();
     void check_batteries();
     bool enemy_trail(int n);
     void enemies_movement();
