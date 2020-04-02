@@ -72,6 +72,7 @@ typedef enum color_e
     YELLOW,
     CYAN,
     /*...*/
+    BLACK,
     WHITE,
 } color_t;
 
