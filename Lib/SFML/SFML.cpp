@@ -126,26 +126,42 @@ void SFML::displayMap(map_info_t map)
                 switch (map.map[i][j])
                 {
                 case 'X':
+                case 'T':
                     rectangle.setPosition(x, y);
                     _map.push_back(rectangle);
                     break;
                 case '>':
-                case 'A':
+                case '^':
                 case '<':
-                case 'V':
-                    rectangle.setFillColor(sf::Color::Red);
+                case 'v':
+                    rectangle.setFillColor(sf::Color::Green);
                     rectangle.setPosition(x, y);
                     _map.push_back(rectangle);
                     break;
                 case 'O':
+                case 'o':
                     rectangle.setFillColor(sf::Color::Blue);
                     rectangle.setPosition(x, y);
                     _map.push_back(rectangle);
                     break;
                 case 'P':
-                    rectangle.setFillColor(sf::Color::Green);
+                    rectangle.setFillColor(sf::Color::Yellow);
                     rectangle.setPosition(x, y);
                     _map.push_back(rectangle);
+                    break;
+                case 'E':
+                    rectangle.setFillColor(sf::Color::Magenta);
+                    rectangle.setPosition(x, y);
+                    _map.push_back(rectangle);
+                    break;
+                case '6':
+                case '3':
+                case '4':
+                case 'Y':
+                    rectangle.setFillColor(sf::Color::Red);
+                    rectangle.setPosition(x, y);
+                    _map.push_back(rectangle);
+                    break;
                 }
                 x += 20;
             }
@@ -175,8 +191,6 @@ void SFML::displayMap(map_info_t map)
 }
 playerEvent SFML::getKey()
 {
-    sf::Event event;
-    if (_window.pollEvent(event)) {
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
             return PE_UP;
@@ -208,7 +222,6 @@ playerEvent SFML::getKey()
             _window.close();
             return PE_PREV_GAME;
         }
-    }
 }
 SFML::~SFML()
 {

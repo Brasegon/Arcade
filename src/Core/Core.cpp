@@ -148,6 +148,7 @@ void Core::nextGame_Lib()
     // if (_actual_game_lib != NULL)
     //     delete _actual_game_lib;
     _actual_game_lib = temp->getInstance("entryPoint", 40, 40);
+    _actual_graphical_lib->init_game();
 }
 
 void Core::prevGame_Lib()
@@ -159,6 +160,7 @@ void Core::prevGame_Lib()
     else _what_game = _what_game - 1;
     DLLoader<game_lib> *temp = new DLLoader<game_lib>(getPathGameFromWhatGame());
     _actual_game_lib = temp->getInstance("entryPoint", 40, 40);
+    _actual_graphical_lib->init_game();
 }
 
 void Core::nextGraphique_Lib()
