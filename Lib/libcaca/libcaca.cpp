@@ -645,8 +645,6 @@ int CACA::displayMenu()
         caca_put_str(canvas, 5, 6, "EXIT");
         caca_set_color_ansi(canvas, CACA_WHITE, CACA_BLACK);
     }
-
-    // }
     return (0);
 }
 
@@ -661,7 +659,23 @@ void CACA::displayMap(map_info_t map)
                 caca_put_char(game_canvas, x, y, map.map[y][x]);
                 break;
             case 'P':
-                caca_set_color_ansi(game_canvas, CACA_RED, CACA_BLACK);
+                caca_set_color_ansi(game_canvas, CACA_RED, CACA_RED);
+                caca_put_char(game_canvas, x, y, map.map[y][x]);
+                break;
+            case 'B':
+                caca_set_color_ansi(game_canvas, CACA_YELLOW, CACA_YELLOW);
+                caca_put_char(game_canvas, x, y, map.map[y][x]);
+                break;
+            case 'E':
+                caca_set_color_ansi(game_canvas, CACA_MAGENTA, CACA_MAGENTA);
+                caca_put_char(game_canvas, x, y, map.map[y][x]);
+                break;
+            case '6':
+                caca_set_color_ansi(game_canvas, CACA_RED, CACA_RED);
+                caca_put_char(game_canvas, x, y, map.map[y][x]);
+                break;
+            case 'o':
+                caca_set_color_ansi(game_canvas, CACA_BLUE, CACA_BLUE);
                 caca_put_char(game_canvas, x, y, map.map[y][x]);
                 break;
             case 'O':
@@ -684,9 +698,45 @@ void CACA::displayMap(map_info_t map)
                 caca_set_color_ansi(game_canvas, CACA_GREEN, CACA_BLACK);
                 caca_put_char(game_canvas, x, y, map.map[y][x]);
                 break;
+            case '/':
+                caca_set_color_ansi(game_canvas, CACA_WHITE, CACA_BLACK);
+                caca_put_str(game_canvas, x, y, "|");
+                break;
+            case '{':
+                caca_set_color_ansi(game_canvas, CACA_WHITE, CACA_BLACK);
+                caca_put_str(game_canvas, x, y, "└");
+                break;
+            case '}':
+                caca_set_color_ansi(game_canvas, CACA_WHITE, CACA_BLACK);
+                caca_put_str(game_canvas, x, y, "┘");
+                break;
+            case '[':
+                caca_set_color_ansi(game_canvas, CACA_WHITE, CACA_BLACK);
+                caca_put_str(game_canvas, x, y, "┌");
+                break;
+            case ']':
+                caca_set_color_ansi(game_canvas, CACA_WHITE, CACA_BLACK);
+                caca_put_str(game_canvas, x, y, "┐");
+                break;
+            case '(':
+                caca_set_color_ansi(game_canvas, CACA_WHITE, CACA_BLACK);
+                caca_put_str(game_canvas, x, y, "|");
+                break;
+            case ')':
+                caca_set_color_ansi(game_canvas, CACA_WHITE, CACA_BLACK);
+                caca_put_str(game_canvas, x, y, "|");
+                break;
+            case ':':
+                caca_set_color_ansi(game_canvas, CACA_WHITE, CACA_BLACK);
+                caca_put_str(game_canvas, x, y, "-");
+                break;
+            case ';':
+                caca_set_color_ansi(game_canvas, CACA_WHITE, CACA_BLACK);
+                caca_put_str(game_canvas, x, y, "-");
+                break;
                 /*  + - / { } [ ] ( ) : ;  */
                 /*  ╋ ━ ┃ ┗ ┛ ┏ ┓ ┣ ┫ ┻ ┳  */
-            case '+':
+            /* case '+':
                 caca_set_color_ansi(game_canvas, CACA_WHITE, CACA_BLACK);
                 caca_put_str(game_canvas, x, y, "╋");
                 break;
@@ -729,7 +779,7 @@ void CACA::displayMap(map_info_t map)
             case ';':
                 caca_set_color_ansi(game_canvas, CACA_WHITE, CACA_BLACK);
                 caca_put_str(game_canvas, x, y, "┳");
-                break;
+                break; */
             case 'T':
                 caca_set_color_ansi(game_canvas, CACA_BLACK, CACA_BLACK);
                 caca_put_str(game_canvas, x, y, "T");
@@ -802,5 +852,6 @@ playerEvent CACA::getKey()
 CACA::~CACA()
 {
     caca_free_canvas(canvas);
+    caca_free_canvas(game_canvas);
     caca_free_display(display);
 }
