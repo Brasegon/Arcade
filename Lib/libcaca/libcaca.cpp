@@ -684,13 +684,20 @@ void CACA::displayMap(map_info_t map)
                 caca_set_color_ansi(game_canvas, CACA_GREEN, CACA_BLACK);
                 caca_put_char(game_canvas, x, y, map.map[y][x]);
                 break;
+                /*  + - / { } [ ] ( ) : ;  */
+                /*  ╋ ━ ┃ ┗ ┛ ┏ ┓ ┣ ┫ ┻ ┳  */
             case '+':
                 caca_set_color_ansi(game_canvas, CACA_WHITE, CACA_BLACK);
-                caca_put_str(game_canvas, x, y, "+");
+                caca_put_str(game_canvas, x, y, "╋");
+                break;
+            case '-':
+                caca_set_color_ansi(game_canvas, CACA_WHITE, CACA_BLACK);
+                caca_put_str(game_canvas, x, y, "━");
                 break;
             case '/':
                 caca_set_color_ansi(game_canvas, CACA_WHITE, CACA_BLACK);
-                caca_put_char(game_canvas, x, y, '|');
+                caca_put_str(game_canvas, x, y, "┃");
+                break;
             case 'T':
                 caca_set_color_ansi(game_canvas, CACA_BLACK, CACA_BLACK);
                 caca_put_str(game_canvas, x, y, "T");
