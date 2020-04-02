@@ -40,14 +40,6 @@ Nibbler::Nibbler()
         {8, 10},
         {7, 10},
     };
-    for (int y = 0; y < start_map.map.size(); y++) {
-        for (int x = 0; x < start_map.map.size(); x++) {
-            if (start_map.map[y][x] == 'X') {
-                start_map.pixel.push_back({WHITE, {x, y}});
-            }
-        }
-    }
-    i_pixel_head = start_map.pixel.size()+1;
     reset_game();
 }
 
@@ -60,17 +52,39 @@ void Nibbler::reset_game()
     map = start_map;
     body = start_body;
     generate_apple();
-    map.pixel.push_back({RED, apple.pos});
-    for (position_t bpos : body) {
-        map.pixel.push_back({GREEN, bpos});
-    }
+    generate_colors();
     game_pause = true;
     direction_register = PE_RIGHT;
     direction = PE_RIGHT;
     apple.eaten = false;
-    game_speed = 1;
+    game_speed = 2;
     clock_start = chrono::high_resolution_clock::now();
 }
+
+void Nibbler::generate_colors()
+{
+    char c = 0;
+
+    map.pixel.clear();
+    for (int y = 0; y < map.map.size(); y++) {
+        for (int x = 0; x < map.map.size(); x++) {
+            c = map.map[y][x];
+            if (c == 'X') {
+                map.pixel.push_back({WHITE, {x, y}});
+            }
+            if (c == 'P') {
+                map.pixel.push_back({RED, {x, y}});
+            }
+            if (c == 'O') {
+                map.pixel.push_back({GREEN, {x, y}});
+            }
+            if (c == '<' || c == '>' || c == '^' || c == 'v') {
+                map.pixel.push_back({GREEN, {x, y}});
+            }
+        }
+    }
+}
+
 
 void Nibbler::generate_apple()
 {
@@ -94,8 +108,6 @@ map_info_t Nibbler::game(playerEvent action)
         else
             game_pause = false;
     }
-    clock_end = chrono::high_resolution_clock::now();
-    elapsed_seconds = clock_end-clock_start;
     //next movement record
     if (action == PE_UP || action == PE_DOWN ||
         action == PE_LEFT || action == PE_RIGHT) {
@@ -108,26 +120,24 @@ map_info_t Nibbler::game(playerEvent action)
         if (action == PE_RIGHT && direction != PE_LEFT)
             direction_register = action;
     }
-    //clock managment
+    // clock managment
     if (action == PE_ACTION1) {
         if (game_speed == 1)
             game_speed = 2;
         else
             game_speed = 1;
     }
-    if (elapsed_seconds < (game_speed == 1 ? 0.2s : 0.1s))
+    clock_end = chrono::high_resolution_clock::now();
+    elapsed_seconds = clock_end-clock_start;
+    if (elapsed_seconds < 0.1s*game_speed)
         return map;
-    else
-        clock_start = chrono::high_resolution_clock::now();
+    clock_start = chrono::high_resolution_clock::now();
     //movement
     if (move_body() == 1) {
         reset_game();
     }
     //color
-    map.pixel[+i_pixel_head-1].pos = apple.pos;
-    for (int i = 0; i < body.size(); i++) {
-        map.pixel[i+i_pixel_head].pos = body[i];
-    }
+    generate_colors();
     return map;
 }
 
@@ -166,7 +176,6 @@ int Nibbler::move_body()
             if (apple.eaten) {
                 //snake body + 1
                 body.push_back(body[i]);
-                map.pixel.push_back({GREEN, body[i]});
                 apple.eaten = false;
             }
             else

@@ -257,13 +257,10 @@ void Ncurses::displayMap(map_info_t map)
     int i = 0;
     char c = 0;
     erase();
-    for (string line : map.map) {
-        mvaddstr(1+i, 1, line.c_str());
-        i++;
-    }
     for (int y = 1; y < map.map.size()-1; y++) {
         for (int x = 1; x < map.map.size()-1; x++) {
             c = map.map[y][x];
+            mvaddch(y+1, x+1, c);
             if (c == '+') {
                 mvaddch(y+1, x+1, ACS_PLUS);
             }

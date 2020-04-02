@@ -81,7 +81,7 @@ void Core::menu_loop()
         ret = _actual_graphical_lib->displayMenu();
         // std::cout << ret << std::endl;
         if (ret == -1) {
-            exit(0);
+            return;
         }
         if (ret == 1) {
             // _what_game = 0;
