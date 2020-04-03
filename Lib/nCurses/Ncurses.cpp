@@ -200,7 +200,6 @@ playerEvent Ncurses::displayMenu()
         wclear(wmenu);
         wclear(wvisual);
         refresh();
-        wmenu = newwin(LINES, COLS/4, 0, 0);
         box(wmenu, 0, 0);
         wmove(wmenu, 1, 2);
         waddstr(wmenu, "GAMES");
@@ -328,7 +327,7 @@ void Ncurses::displayMap(map_info_t map)
         mvchgat(pixel.pos.y+1, pixel.pos.x+1, 1, A_NORMAL, pixel.color, NULL);
     }
     refresh();
-    save_score();
+    // save_score();
 }
 
 void Ncurses::save_score()
@@ -366,19 +365,19 @@ playerEvent Ncurses::getKey()
     case 'e':
         return PE_ACTION3;
     case 'g':
-        endwin();
+        // endwin();
         return PE_NEXT_GAME;
     case 'f':
-        endwin();
+        // endwin();
         return PE_PREV_GAME;
     case 'l':
-        endwin();
+        // endwin();
         return PE_NEXT_LIB;
     case 'k':
-        endwin();
+        // endwin();
         return PE_PREV_LIB;
     case 'r':
-        endwin();
+        // endwin();
         return PE_RESTART;
     default:
         return PE_NOACTION;

@@ -48,25 +48,19 @@ int main(int ac, char **av)
 {
     if (ac == 2) {
         checkFileExist(av[1]);
-        Core core(av[1]);
+        Core *core = new Core(av[1]);
         try {
-            core.load_lib();
-            while (core.get_action() != PE_EXIT) {
-                core.arcade();
-                if (core.get_action() == PE_NEXT_GAME)
-                    core.nextGame_Lib();
-                if (core.get_action() == PE_PREV_GAME)
-                    core.prevGame_Lib();
-                if (core.get_action() == PE_NEXT_LIB)
-                    core.nextGraphique_Lib();
-                if (core.get_action() == PE_PREV_LIB)
-                    core.prevGraphique_Lib();
+            core->load_lib();
+            while (core->get_action() != PE_EXIT) {
+                core->arcade();
             }
         }
         catch (MyExeption &e) {
             printf("exception : %s", e.what());
+            delete core;
             return 84;
         }
+        delete core;
         return (0);
     }
     return (84);

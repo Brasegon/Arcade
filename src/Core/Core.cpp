@@ -32,13 +32,13 @@ Core::Core(const std::string &lib)
 void Core::load_lib()
 {
     DLLoader<IGraphLib> *libtemp = new DLLoader<IGraphLib>(libList[selected_graph]);
-    graph = libtemp->getInstance("entryPoint");
+    graph = libtemp->getInstance();
     DLLoader<game_lib> *gametemp = new DLLoader<game_lib>(gameList[selected_game]);
-    game = gametemp->getInstance("entryPoint");
+    game = gametemp->getInstance();
     if (graph == NULL)
-        throw MyExeption("ALED");
+        throw MyExeption("failed to load graphical library");
     if (game == NULL)
-        throw MyExeption("ALED2");
+        throw MyExeption("failed to load game library");
     graph->setGameList(gameList);
     graph->setLibList(libList);
 }
@@ -86,11 +86,15 @@ void Core::arcade()
 
 bool Core::event()
 {
-    if (action == PE_EXIT
-    || action == PE_NEXT_GAME
-    || action == PE_PREV_GAME
-    || action == PE_NEXT_LIB
-    || action == PE_PREV_LIB)
+    if (action == PE_NEXT_GAME)
+        nextGame_Lib();
+    if (action == PE_PREV_GAME)
+        prevGame_Lib();
+    if (action == PE_NEXT_LIB)
+        nextGraphique_Lib();
+    if (action == PE_PREV_LIB)
+        prevGraphique_Lib();
+    if (action == PE_EXIT)
         return true;
     return false;
 }
@@ -105,7 +109,7 @@ void Core::nextGame_Lib()
     if (selected_game > (int) gameList.size()-1)
         selected_game = 0;
     temp = new DLLoader<game_lib>(gameList[selected_game]);
-    game = temp->getInstance("entryPoint", 40, 40);
+    game = temp->getInstance();
     graph->init_game();
 }
 
@@ -117,7 +121,7 @@ void Core::prevGame_Lib()
     if (selected_game < 0)
         selected_game = gameList.size()-1;
     DLLoader<game_lib> *temp = new DLLoader<game_lib>(gameList[selected_game]);
-    game = temp->getInstance("entryPoint", 40, 40);
+    game = temp->getInstance();
     graph->init_game();
 }
 
@@ -128,7 +132,7 @@ void Core::nextGraphique_Lib()
     if (selected_graph > max_graphical_lib)
         selected_graph = 0;
     DLLoader<IGraphLib> *temp = new DLLoader<IGraphLib>(libList[selected_graph]);
-    graph = temp->getInstance("entryPoint");
+    graph = temp->getInstance();
     graph->init_game();
 }
 
@@ -141,7 +145,7 @@ void Core::prevGraphique_Lib()
     else
         selected_graph = selected_graph - 1;
     DLLoader<IGraphLib> *temp = new DLLoader<IGraphLib>(libList[selected_graph]);
-    graph = temp->getInstance("entryPoint");
+    graph = temp->getInstance();
     graph->init_game();
 }
 

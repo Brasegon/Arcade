@@ -33,16 +33,14 @@ class DLLoader {
         }
 
         ~DLLoader() {
-            if (dlclose(_void_etoile) != 0)
-                throw MyExeption("Error : Can't close library.");
+            dlclose(_void_etoile);
         }
-
-        T *getInstance(std::string entry_point, int width = 20, int height = 20) {
-            T	*(*ptr)(int, int);
-            ptr = reinterpret_cast<T *(*)(int, int)>(dlsym(_void_etoile, entry_point.c_str()));
+        T *getInstance() {
+            T	*(*ptr)();
+            ptr = reinterpret_cast<T *(*)()>(dlsym(_void_etoile, "entryPoint"));
             if (ptr == NULL)
                 return (NULL);
-            return ptr(width, height);
+            return ptr();
         }
 
         DLLoader &operator=(DLLoader const &copy) {
@@ -52,8 +50,8 @@ class DLLoader {
             return *this;
         }
 
-        void *_void_etoile;
     protected:
+        void *_void_etoile;
         std::string _path;
     private:
 };
