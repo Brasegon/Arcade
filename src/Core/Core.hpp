@@ -21,13 +21,8 @@ class Core {
         ~Core();
 
         void load_lib();
-        std::string const &getPathGameFromWhatGame();
-        std::string const &getPathLibFromWhatLib();
-        void startArcade();
-        void restartArcade();
-        void startGame();
-        void event(playerEvent record_key);
-        // void drawGame_Map();
+        void arcade();
+        bool event();
         void nextGame_Lib();
         void prevGame_Lib();
         void nextGraphique_Lib();
@@ -36,23 +31,20 @@ class Core {
         void game_loop();
 
         void parseGameList();
-        const std::map<std::string, std::string> &getGameList() const;
+        const vector<string> &getGameList() const;
         
         void parseGraphList();
-        const std::map<std::string, std::string> &getLibList() const;
+        const vector<string> &getLibList() const;
 
+        playerEvent get_action() const;
     protected:
-        std::map<std::string, std::string> _map_lib_path;
-        std::map<std::string, std::string> _map_game_path;
-        std::string _string_path_lib;
-        IGraphLib *_actual_graphical_lib;
-        game_lib *_actual_game_lib;
-        int _what_game;
-        int _what_graphical_lib;
-        /*map_info_t*/ std::vector<std::string> _map;
+        IGraphLib *graph;
+        game_lib *game;
+        int selected_game;
+        int selected_graph;
+        playerEvent action;
+        bool in_menu;
 
-
-        const std::string libName;
         std::vector<std::string> libList;
         std::vector<std::string> gameList;
     private:

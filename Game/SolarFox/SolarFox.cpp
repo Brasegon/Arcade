@@ -38,6 +38,7 @@ SolarFox::SolarFox()
     "XEYYYYYYYYYYYYYYYYYYYYYX",
     "XXXXXXXXXXXXXXXXXXXXXXXX",
     };
+    start_map.score = 0;
     for (int y = 0; y < start_map.map.size(); y++) {
         for (int x = 0; x < start_map.map.size(); x++) {
             c = start_map.map[y][x];
@@ -71,6 +72,7 @@ void SolarFox::reset_game()
     map = start_map;
     direction = D_RIGHT;
     direction_register = D_RIGHT;
+    player_speed = 0.1s;
     for (int a = 0; a < map.map.size(); a++) {
         for (int i = 0; i < map.map[a].size(); i++) {
             //init enemies
@@ -410,6 +412,7 @@ void SolarFox::player_movement()
     for (int i = 0; i < batteries.size(); i++) {
         if (batteries[i].pos == player.pos) {
             batteries.erase(batteries.begin()+i);
+            map.score += 1;
             i--;
         }
     }
@@ -456,12 +459,14 @@ void SolarFox::check_all_hitboxes()
         for (int i = 0; i < batteries.size(); i++) {
             if (player.shot.pos == batteries[i].pos) {
                 batteries.erase(batteries.begin()+i);
+                map.score += 1;
                 i--;
             }
         }
         for (int i = 0; i < eshots.size(); i++) {
             if (player.shot.pos == eshots[i].pos) {
                 eshots.erase(eshots.begin()+i);
+                map.score += 1;
                 i--;
             }
         }
@@ -477,7 +482,7 @@ void SolarFox::check_all_hitboxes()
 
 void SolarFox::playershot_register(playerEvent action)
 {
-    if (action != PE_ACTION1)
+    if (action != PE_ACTION2)
         return;
     if (player.shot.distance != 0)
         return;
@@ -556,6 +561,7 @@ void SolarFox::enemies_check()
         if (enemies[i].life <= 0) {
             map.map[enemies[i].pos.y][enemies[i].pos.x] = ' ';
             enemies.erase(enemies.begin()+i);
+            map.score += 2;
             i--;
         }
     }
@@ -606,6 +612,7 @@ map_info_t SolarFox::game(playerEvent action)
 {
     chrono::high_resolution_clock::time_point clock_end;
     chrono::duration<double> elapsed_seconds;
+    int score_register = 0;
 
     //restart
     if (action == PE_RESTART)
@@ -617,6 +624,13 @@ map_info_t SolarFox::game(playerEvent action)
             return map;
         else
             game_pause = false;
+    }
+    //player acceleration
+    if (action == PE_ACTION1) {
+        if (player_speed == (chrono::duration<double>) 0.1s)
+            player_speed = 0.06s;
+        else
+            player_speed = 0.1s;
     }
     check_batteries();
     enemies_check();
@@ -631,7 +645,7 @@ map_info_t SolarFox::game(playerEvent action)
     movement_register(action);
     //clock player
     elapsed_seconds = clock_end-clock_start2;
-    if (elapsed_seconds > 0.1s) {
+    if (elapsed_seconds > player_speed) {
         player_movement();
         clock_start2 = chrono::high_resolution_clock::now();
     }
@@ -654,7 +668,9 @@ map_info_t SolarFox::game(playerEvent action)
         reset_game();
     }
     if (game_status == WIN) {
+        score_register = map.score;
         reset_game();
+        map.score = score_register;
     }
     generate_path();
     generate_colors();

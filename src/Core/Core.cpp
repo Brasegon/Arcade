@@ -8,199 +8,141 @@
 #include "Core.hpp"
 #include "DLLoader.hpp"
 
-
 static const std::regex REGEX("^[a-zA-Z0-9_]*.so");
+
 Core::Core(const std::string &lib)
 {
-    _what_game = 0;
-    _actual_game_lib = nullptr;
-    _actual_graphical_lib = nullptr;
-    libList.insert(libList.begin(), "./" + lib);
+    selected_game = 0;
+    in_menu = true;
+    game = nullptr;
+    graph = nullptr;
+    action = PE_NOACTION;
+    selected_graph = 0;
+    selected_game = 0;
+    if (lib.find("./Lib") == 0)
+        libList.insert(libList.begin(), lib);
+    else
+        libList.insert(libList.begin(), "./" + lib);
     parseGameList();
     parseGraphList();
-}
-
-std::string const &Core::getPathGameFromWhatGame()
-{
-     return (gameList[_what_game]);
-}
-
-std::string const &Core::getPathLibFromWhatLib()
-{
-     return (libList[_what_graphical_lib]);
+    if (gameList.empty() || libList.empty())
+        action = PE_EXIT;
 }
 
 void Core::load_lib()
 {
-    DLLoader<IGraphLib> *libtemp = new DLLoader<IGraphLib>(getPathLibFromWhatLib());
-    _actual_graphical_lib = libtemp->getInstance("entryPoint");
-    DLLoader<game_lib> *gametemp = new DLLoader<game_lib>(getPathGameFromWhatGame());
-    _actual_game_lib = gametemp->getInstance("entryPoint");
-    if (_actual_graphical_lib == NULL)
+    DLLoader<IGraphLib> *libtemp = new DLLoader<IGraphLib>(libList[selected_graph]);
+    graph = libtemp->getInstance("entryPoint");
+    DLLoader<game_lib> *gametemp = new DLLoader<game_lib>(gameList[selected_game]);
+    game = gametemp->getInstance("entryPoint");
+    if (graph == NULL)
         throw MyExeption("ALED");
-    if (_actual_game_lib == NULL)
+    if (game == NULL)
         throw MyExeption("ALED2");
-    startArcade();
-}
-
-void Core::startArcade() {
-    // if (_actual_graphical_lib->menu() == 1)
-    //     _what_game = 1;
-    // else
-    //     _what_game = 0;
-    // if (_actual_game_lib != NULL)
-    //     delete _actual_game_lib;
-    // DLLoader<game_lib> *temp = new DLLoader<game_lib>(getPathGameFromWhatGame());
-    // _actual_game_lib = temp->getInstance("game", 40, 40);
-    // if (_actual_game_lib == NULL)
-    //     throw MyExeption("actual_game_lib == NULL");
-    startGame();
-}
-
-void Core::restartArcade() {
-    if (_actual_game_lib != NULL)
-        delete _actual_game_lib;
-    DLLoader<game_lib> *temp = new DLLoader<game_lib>(getPathGameFromWhatGame());
-    _actual_game_lib = temp->getInstance("game", 40, 40);
-    if (_actual_game_lib == NULL)
-        throw MyExeption("actual_game_lib == NULL");
-    startGame();
+    graph->setGameList(gameList);
+    graph->setLibList(libList);
 }
 
 void Core::menu_loop()
 {
-    int ret;
-
-    std::vector<string> libs;
-    map<string, string>::iterator it;
-
-    _actual_graphical_lib->setLibList(libList);
-    _actual_graphical_lib->init_menu();
-
+    graph->init_menu();
     while (1) {
-        ret = _actual_graphical_lib->displayMenu();
-        // std::cout << ret << std::endl;
-        if (ret == -1) {
+        action = graph->displayMenu();
+        if (action == PE_RESTART) {
+            in_menu = false;
             return;
         }
-        if (ret == 1) {
-            // _what_game = 0;
-            // if (_actual_game_lib != NULL)
-            //     delete _actual_game_lib;
-            // DLLoader<game_lib> *temp = new DLLoader<game_lib>(getPathGameFromWhatGame());
-            // _actual_game_lib = temp->getInstance("game", 40, 40);
-            game_loop();
+        if (event())
             return;
-        }
-        if (ret == 2) {
-            // _what_game = 1;
-            // if (_actual_game_lib != NULL)
-            //     delete _actual_game_lib;
-            // DLLoader<game_lib> *temp = new DLLoader<game_lib>(getPathGameFromWhatGame());
-            // _actual_game_lib = temp->getInstance("game", 40, 40);
-            game_loop();
-            return;
-        }
     }
 }
 
 void Core::game_loop()
 {
-    playerEvent action = PE_NOACTION;
     map_info_t mapinfo;
-    
-    _actual_graphical_lib->init_game();
+
+    graph->init_game();
     while (1) {
-        action = _actual_graphical_lib->getKey();
-        event(action);
-        mapinfo = _actual_game_lib->game(action);
-        _actual_graphical_lib->displayMap(mapinfo);
+        action = graph->getKey();
+        mapinfo = game->game(action);
+        graph->displayMap(mapinfo);
         if (action == PE_EXIT) {
+            action = PE_NOACTION;
+            in_menu = true;
             return;
         }
-        if (action == PE_RESTART) {
-            menu_loop();
+        if (event())
             return;
-        }
     }
 }
 
-void Core::startGame()
+void Core::arcade()
 {
-    _actual_graphical_lib->setGameList(gameList);
-    _actual_graphical_lib->setLibList(libList);
-    menu_loop();
+    if (in_menu)
+        menu_loop();
+    else
+        game_loop();
 }
 
-void Core::event(playerEvent record_key)
+bool Core::event()
 {
-    if (record_key == PE_NEXT_GAME)
-        nextGame_Lib();
-    if (record_key == PE_PREV_GAME)
-        prevGame_Lib();
-    if (record_key == PE_NEXT_LIB) {
-        nextGraphique_Lib();
-        
-    }
-    if (record_key == PE_PREV_LIB)
-        prevGraphique_Lib();
-    // if (record_key == PE_RESTART)
-    //     restartArcade();
+    if (action == PE_EXIT
+    || action == PE_NEXT_GAME
+    || action == PE_PREV_GAME
+    || action == PE_NEXT_LIB
+    || action == PE_PREV_LIB)
+        return true;
+    return false;
 }
-
-// void Core::drawGame_Map()
-// {
-// 
-// }
 
 void Core::nextGame_Lib()
 {
-    int max_game_lib = gameList.size() - 1;
-    _what_game = _what_game + 1;
-    if (_what_game > max_game_lib)
-        _what_game = 0;
-    DLLoader<game_lib> *temp = new DLLoader<game_lib>(getPathGameFromWhatGame());
-    // if (_actual_game_lib != NULL)
-    //     delete _actual_game_lib;
-    _actual_game_lib = temp->getInstance("entryPoint", 40, 40);
-    _actual_graphical_lib->init_game();
+    DLLoader<game_lib> *temp;
+
+    if (gameList.size() == 1)
+        return;
+    selected_game++;
+    if (selected_game > (int) gameList.size()-1)
+        selected_game = 0;
+    temp = new DLLoader<game_lib>(gameList[selected_game]);
+    game = temp->getInstance("entryPoint", 40, 40);
+    graph->init_game();
 }
 
 void Core::prevGame_Lib()
 {
-    int max_game_lib = gameList.size() - 1;
-
-    if (_what_game == 0)
-        _what_game = max_game_lib;
-    else _what_game = _what_game - 1;
-    DLLoader<game_lib> *temp = new DLLoader<game_lib>(getPathGameFromWhatGame());
-    _actual_game_lib = temp->getInstance("entryPoint", 40, 40);
-    _actual_graphical_lib->init_game();
+    if (gameList.size() == 1)
+        return;
+    selected_game--;
+    if (selected_game < 0)
+        selected_game = gameList.size()-1;
+    DLLoader<game_lib> *temp = new DLLoader<game_lib>(gameList[selected_game]);
+    game = temp->getInstance("entryPoint", 40, 40);
+    graph->init_game();
 }
 
 void Core::nextGraphique_Lib()
 {
     int max_graphical_lib = libList.size() - 1;
-    _what_graphical_lib = _what_graphical_lib + 1;
-    if (_what_graphical_lib > max_graphical_lib)
-        _what_graphical_lib = 0;
-    DLLoader<IGraphLib> *temp = new DLLoader<IGraphLib>(getPathLibFromWhatLib());
-    _actual_graphical_lib = temp->getInstance("entryPoint");
-    _actual_graphical_lib->init_game();
+    selected_graph++;
+    if (selected_graph > max_graphical_lib)
+        selected_graph = 0;
+    DLLoader<IGraphLib> *temp = new DLLoader<IGraphLib>(libList[selected_graph]);
+    graph = temp->getInstance("entryPoint");
+    graph->init_game();
 }
 
 void Core::prevGraphique_Lib()
 {
-    //delete _actual_graphical_lib;
     int max_graphical_lib = libList.size() - 1;
     
-    if (_what_graphical_lib == 0)
-        _what_graphical_lib = max_graphical_lib;
+    if (selected_graph == 0)
+        selected_graph = max_graphical_lib;
     else
-        _what_graphical_lib = _what_graphical_lib - 1;
-    DLLoader<IGraphLib> *temp = new DLLoader<IGraphLib>(getPathLibFromWhatLib());
-    _actual_graphical_lib = temp->getInstance("entryPoint");
-    _actual_graphical_lib->init_game();
+        selected_graph = selected_graph - 1;
+    DLLoader<IGraphLib> *temp = new DLLoader<IGraphLib>(libList[selected_graph]);
+    graph = temp->getInstance("entryPoint");
+    graph->init_game();
 }
 
 
@@ -241,6 +183,21 @@ void Core::parseGraphList() {
         }
         free(namelist);
     }
+}
+
+const vector<string> &Core::getGameList() const
+{
+    return gameList;
+}
+
+const vector<string> &Core::getLibList() const
+{
+    return libList;
+}
+
+playerEvent Core::get_action() const
+{
+    return action;
 }
 
 Core::~Core()

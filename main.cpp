@@ -36,28 +36,37 @@ void checkFileExist(char *file) {
     }
 }
 
-template<typename K, typename V>
-void print_map(map<K,V> const &m)
+template<typename K>
+void print_vector(vector<K> const &m)
 {
     for (auto const& pair: m) {
-        cout << "{" << pair.first << ": " << pair.second << "}" << endl;
+        cout << pair << endl;
     }
 }
 
-int main(int ac, char **av) {
+int main(int ac, char **av)
+{
     if (ac == 2) {
         checkFileExist(av[1]);
-		Core core(av[1]);
-		try {
-			core.load_lib();
-		}
-		catch (MyExeption &e) {
-			printf("%s", e.what());
-			return 84;
-		}
-		// print_map(core.getGameList());
-		// print_map(core.getLibList());
-		// core.startArcade();
+        Core core(av[1]);
+        try {
+            core.load_lib();
+            while (core.get_action() != PE_EXIT) {
+                core.arcade();
+                if (core.get_action() == PE_NEXT_GAME)
+                    core.nextGame_Lib();
+                if (core.get_action() == PE_PREV_GAME)
+                    core.prevGame_Lib();
+                if (core.get_action() == PE_NEXT_LIB)
+                    core.nextGraphique_Lib();
+                if (core.get_action() == PE_PREV_LIB)
+                    core.prevGraphique_Lib();
+            }
+        }
+        catch (MyExeption &e) {
+            printf("exception : %s", e.what());
+            return 84;
+        }
         return (0);
     }
     return (84);

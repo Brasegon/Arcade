@@ -82,6 +82,7 @@ class SolarFox: public game_lib
     vector<shot_t> eshots;
     vector<battery_t> batteries;
     player_t player;
+    chrono::duration<double> player_speed;
     chrono::high_resolution_clock::time_point clock_start1;
     chrono::high_resolution_clock::time_point clock_start2;
     chrono::high_resolution_clock::time_point clock_start3;

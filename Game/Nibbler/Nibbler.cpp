@@ -34,6 +34,7 @@ Nibbler::Nibbler()
     "X                    X",
     "XXXXXXXXXXXXXXXXXXXXXX",
     };
+    start_map.score = 0;
     start_body = {
         {10, 10},
         {9, 10},
@@ -57,7 +58,7 @@ void Nibbler::reset_game()
     direction_register = PE_RIGHT;
     direction = PE_RIGHT;
     apple.eaten = false;
-    game_speed = 2;
+    game_speed = 0.2s;
     clock_start = chrono::high_resolution_clock::now();
 }
 
@@ -120,16 +121,16 @@ map_info_t Nibbler::game(playerEvent action)
         if (action == PE_RIGHT && direction != PE_LEFT)
             direction_register = action;
     }
-    // clock managment
+    //player acceleration
     if (action == PE_ACTION1) {
-        if (game_speed == 1)
-            game_speed = 2;
+        if (game_speed == (chrono::duration<double>) 0.2s)
+            game_speed = 0.1s;
         else
-            game_speed = 1;
+            game_speed = 0.2s;
     }
     clock_end = chrono::high_resolution_clock::now();
     elapsed_seconds = clock_end-clock_start;
-    if (elapsed_seconds < 0.1s*game_speed)
+    if (elapsed_seconds < game_speed)
         return map;
     clock_start = chrono::high_resolution_clock::now();
     //movement
@@ -148,24 +149,28 @@ int Nibbler::move_body()
         if ((position_t){body[0].x, body[0].y-1} == apple.pos) {
             generate_apple();
             apple.eaten = true;
+            map.score += 1;
         }
     }
     if (direction == PE_DOWN) {
         if ((position_t){body[0].x, body[0].y+1} == apple.pos) {
             generate_apple();
             apple.eaten = true;
+            map.score += 1;
         }
     }
     if (direction == PE_LEFT) {
         if ((position_t){body[0].x-1, body[0].y} == apple.pos) {
             generate_apple();
             apple.eaten = true;
+            map.score += 1;
         }
     }
     if (direction == PE_RIGHT) {
         if ((position_t){body[0].x+1, body[0].y} == apple.pos) {
             generate_apple();
             apple.eaten = true;
+            map.score += 1;
         }
     }
     // body following the head

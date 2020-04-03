@@ -22,7 +22,7 @@ class CACA : public IGraphLib
         void setLibList(vector<string>);
         void init_menu();
         void init_game();
-        int displayMenu();
+        playerEvent displayMenu();
         void displayMap(map_info_t map);
         playerEvent getKey();
 

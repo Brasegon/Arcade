@@ -90,6 +90,7 @@ typedef struct pixel_s
 
 typedef struct map_info_s
 {
+    int score;
     vector<pixel_t> pixel;
     vector<string> map;
 } map_info_t;
@@ -119,7 +120,7 @@ class IGraphLib {
         virtual void setLibList(vector<string>) = 0;
         virtual void init_menu() = 0;
         virtual void init_game() = 0;
-        virtual int displayMenu() = 0;
+        virtual playerEvent displayMenu() = 0;
         virtual void displayMap(map_info_t map) = 0;
         virtual playerEvent getKey() = 0;
     protected:

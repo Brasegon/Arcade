@@ -11,6 +11,9 @@
 #include "../IGraphLib.hpp"
 #include <ncurses.h>
 #include <thread>
+#include <iostream>
+#include <fstream>
+#include <dirent.h>
 
 class Ncurses : public IGraphLib
 {
@@ -21,12 +24,13 @@ class Ncurses : public IGraphLib
         void setLibList(vector<string>);
         void init_menu();
         void init_game();
-        int displayMenu();
+        playerEvent displayMenu();
         void displayMap(map_info_t map);
         playerEvent getKey();
     protected:
     private:
         void update_scr();
+        void save_score();
         menu_e menu;
         WINDOW *wmenu;
         WINDOW *wvisual;

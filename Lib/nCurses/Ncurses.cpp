@@ -188,7 +188,7 @@ void Ncurses::update_scr()
 }
 
 // affiche le menu
-int Ncurses::displayMenu()
+playerEvent Ncurses::displayMenu()
 {
     int ch = getch();
 
@@ -225,7 +225,7 @@ int Ncurses::displayMenu()
         update_scr();
     }
     if (menu == MENU_GAMES && ch == '\n') {
-        return 1;
+        return PE_RESTART;
     }
     if (menu == MENU_CHANGE_NAME && ch == '\n') {
         wmove(wvisual, 2, 19);
@@ -242,11 +242,25 @@ int Ncurses::displayMenu()
         nodelay(wvisual, TRUE);
     }
     if (menu == MENU_EXIT && ch == '\n') {
-        return -1;
+        return PE_EXIT;
     }
-    if (ch == 'q')
-        return -1;
-    return 0;
+    switch (ch)
+    {
+    case 'q':
+        return PE_EXIT;
+    case 'g':
+        return PE_NEXT_GAME;
+    case 'f':
+        return PE_PREV_GAME;
+    case 'l':
+        return PE_NEXT_LIB;
+    case 'k':
+        return PE_PREV_LIB;
+    case 'r':
+        return PE_RESTART;
+    default:
+        return PE_NOACTION;
+    }
 }
 
 // affiche la map envoyée par le jeu
@@ -296,6 +310,14 @@ void Ncurses::displayMap(map_info_t map)
             }
         }
     }
+    mvaddstr(map.map.size()+2, 1, "player name : ");
+    attron(COLOR_PAIR(WHITE+2));
+    addstr(name);
+    attroff(COLOR_PAIR(WHITE+2));
+    addstr("  |  score : ");
+    attron(COLOR_PAIR(WHITE+2));
+    printw("%i", map.score);
+    attroff(COLOR_PAIR(WHITE+2));
 
     for (pixel_t pixel : map.pixel) {
         c = map.map[pixel.pos.y][pixel.pos.x];
@@ -306,6 +328,21 @@ void Ncurses::displayMap(map_info_t map)
         mvchgat(pixel.pos.y+1, pixel.pos.x+1, 1, A_NORMAL, pixel.color, NULL);
     }
     refresh();
+    save_score();
+}
+
+void Ncurses::save_score()
+{
+    fstream myfile;
+    string filecontent;
+
+    myfile.open ("../score_solarfox", fstream::out);
+
+    myfile >> filecontent;
+    filecontent.find("ncurses");
+
+    myfile << "Writing this to a file.\n";
+    myfile.close();
 }
 
 playerEvent Ncurses::getKey()

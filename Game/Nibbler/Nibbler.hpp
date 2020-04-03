@@ -47,7 +47,7 @@ class Nibbler: public game_lib
         chrono::high_resolution_clock::time_point clock_start;
         bool game_pause;
         int i_pixel_head;
-        int game_speed;
+        chrono::duration<double> game_speed;
 };
 
 bool operator==(apple_t apple, vector<position_t> vect);

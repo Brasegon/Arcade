@@ -98,7 +98,7 @@ void CACA::init_game()
 {
 }
 
-int CACA::displayMenu()
+playerEvent CACA::displayMenu()
 {
     caca_refresh_display(display);
     caca_event_t event;
@@ -146,7 +146,7 @@ int CACA::displayMenu()
     }
     // std::cout << selected << std::endl;
     if (key == CACA_KEY_ESCAPE || key == 'q' /*|| (choose == 4 && key == CACA_KEY_RETURN)*/) {
-        return (-1);
+        return (PE_EXIT);
     }
     if (key == CACA_KEY_RETURN) {
         if (selected < 9 && old_choose == 0 && choose != 3) {
@@ -157,9 +157,9 @@ int CACA::displayMenu()
         else {
             // std::cout << selected << std::endl;
             if (selected == 10)
-                return (1);
+                return (PE_RESTART);
             if (selected == 11)
-                return (2);
+                return (PE_RESTART);
         }
         // std::cout << selected << std::endl;
     }
@@ -642,14 +642,30 @@ int CACA::displayMenu()
         caca_put_str(canvas, 5, 6, "EXIT");
         caca_set_color_ansi(canvas, CACA_WHITE, CACA_BLACK);
     }
-    return (0);
+    switch (key)
+    {
+    case 'q':
+        return PE_EXIT;
+    case 'g':
+        return PE_NEXT_GAME;
+    case 'f':
+        return PE_PREV_GAME;
+    case 'l':
+        return PE_NEXT_LIB;
+    case 'k':
+        return PE_PREV_LIB;
+    case 'r':
+        return PE_RESTART;
+    default:
+        return PE_NOACTION;
+    }
 }
 
 void CACA::displayMap(map_info_t map)
 {
     caca_clear_canvas(canvas);
-    for (int x = 0; x < map.map.size(); x += 1) {
-        for (int y = 0; y < map.map[x].size(); y += 1) {
+    for (int y = 0; y < map.map.size(); y += 1) {
+        for (int x = 0; x < map.map[y].size(); x += 1) {
             switch (map.map[y][x]) {
             case 'X':
                 caca_set_color_ansi(canvas, CACA_LIGHTCYAN, CACA_BLACK);

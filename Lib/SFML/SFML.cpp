@@ -64,7 +64,7 @@ void SFML::init_game()
 {
     _window.create({1280, 720, 32}, "My window");
 }
-int SFML::displayMenu()
+playerEvent SFML::displayMenu()
 {
     
     if (_window.isOpen()) {
@@ -73,7 +73,7 @@ int SFML::displayMenu()
         {
             if (keyMenu == 0 && sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
                 _window.close();
-                return (1);
+                return (PE_RESTART);
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
                 keyMenu -= 1;
@@ -112,9 +112,9 @@ int SFML::displayMenu()
         }
         _window.display();
     } else {
-        return (-1);
+        return (PE_EXIT);
     }
-
+    return (PE_NOACTION);
 }
 void SFML::displayMap(map_info_t map)
 {
@@ -222,6 +222,7 @@ playerEvent SFML::getKey()
             _window.close();
             return PE_PREV_GAME;
         }
+        return PE_NOACTION;
 }
 SFML::~SFML()
 {
