@@ -329,14 +329,19 @@ playerEvent Ncurses::getKey()
     case 'e':
         return PE_ACTION3;
     case 'g':
+        endwin();
         return PE_NEXT_GAME;
     case 'f':
+        endwin();
         return PE_PREV_GAME;
     case 'l':
+        endwin();
         return PE_NEXT_LIB;
     case 'k':
+        endwin();
         return PE_PREV_LIB;
     case 'r':
+        endwin();
         return PE_RESTART;
     default:
         return PE_NOACTION;
