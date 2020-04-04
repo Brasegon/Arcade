@@ -13,6 +13,7 @@
 #include <thread>
 #include <iostream>
 #include <fstream>
+#include <regex>
 
 class Ncurses : public IGraphLib
 {
@@ -35,7 +36,7 @@ class Ncurses : public IGraphLib
         WINDOW *wvisual;
         vector<string> gamelist;
         vector<string> liblist;
-        char name[30];
+        string playerName;
 };
 
 #endif /* !NCURSES_HPP_ */

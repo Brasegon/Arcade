@@ -1,4 +1,4 @@
-NAME	= lib_arcade_starfox.so
+NAME	= lib_arcade_solarfox.so
 
 CC	= g++
 

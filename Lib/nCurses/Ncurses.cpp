@@ -11,13 +11,7 @@
 Ncurses::Ncurses()
 {
     menu = MENU_GAMES;
-    name[0] = 'p';
-    name[1] = 'l';
-    name[2] = 'a';
-    name[3] = 'y';
-    name[4] = 'e';
-    name[5] = 'r';
-    name[6] = '\0';
+    playerName = "player";
     /*-- initialisation stdscr --*/
     initscr();
     curs_set(0);
@@ -170,7 +164,7 @@ void Ncurses::update_scr()
         mvwaddstr(wmenu, 5, 2, "EXIT");
         mvwaddstr(wvisual, 2, 2, "Enter your name: ");
         wattron(wvisual, COLOR_PAIR(WHITE+2));
-        wprintw(wvisual, "%s", name);
+        wprintw(wvisual, "%s", playerName.c_str());
         wattroff(wvisual, COLOR_PAIR(WHITE+2));
         wattron(wvisual, (A_BLINK| COLOR_PAIR(WHITE+3)));
         mvwaddstr(wvisual, 5, 2, "Press ENTER to confirm");
@@ -190,6 +184,7 @@ void Ncurses::update_scr()
 // affiche le menu
 playerEvent Ncurses::displayMenu()
 {
+    char name[31];
     int ch = getch();
 
     if (ch == KEY_RESIZE) {
@@ -239,6 +234,7 @@ playerEvent Ncurses::displayMenu()
         noecho();
         curs_set(0);
         nodelay(wvisual, TRUE);
+        playerName = name;
     }
     if (menu == MENU_EXIT && ch == '\n') {
         return PE_EXIT;
@@ -311,7 +307,7 @@ void Ncurses::displayMap(map_info_t map)
     }
     mvaddstr(map.map.size()+2, 1, "player name : ");
     attron(COLOR_PAIR(WHITE+2));
-    addstr(name);
+    addstr(playerName.c_str());
     attroff(COLOR_PAIR(WHITE+2));
     addstr("  |  score : ");
     attron(COLOR_PAIR(WHITE+2));
@@ -327,21 +323,10 @@ void Ncurses::displayMap(map_info_t map)
         mvchgat(pixel.pos.y+1, pixel.pos.x+1, 1, A_NORMAL, pixel.color, NULL);
     }
     refresh();
-    // save_score();
 }
 
 void Ncurses::save_score()
 {
-    fstream myfile;
-    string filecontent;
-
-    myfile.open ("../score_solarfox", fstream::out);
-
-    myfile >> filecontent;
-    filecontent.find("ncurses");
-
-    myfile << "Writing this to a file.\n";
-    myfile.close();
 }
 
 playerEvent Ncurses::getKey()

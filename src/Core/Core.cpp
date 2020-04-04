@@ -197,7 +197,6 @@ void Core::parseGameList() {
 		    std::string name = namelist[n]->d_name;
             if (std::regex_match(name.c_str(), cm, REGEX)) {
                 gameList.push_back("./Game/" + name);
-                printf("%s\n", name.c_str());
             }
             free(namelist[n]);
         }

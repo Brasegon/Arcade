@@ -123,7 +123,6 @@ class IGraphLib {
         virtual playerEvent displayMenu() = 0;
         virtual void displayMap(map_info_t map) = 0;
         virtual playerEvent getKey() = 0;
-    protected:
     private:
 };
 
