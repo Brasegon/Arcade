@@ -12,6 +12,7 @@
 #include <string>
 #include "../IGraphLib.hpp"
 #include "caca/caca.h"
+#include <fstream>
 
 class CACA : public IGraphLib
 {

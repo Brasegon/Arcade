@@ -9,22 +9,7 @@
 #include "../IGameLib.hpp"
 #include "Nibbler.hpp"
 
-game_lib *ret = nullptr;
-
-__attribute__((constructor))
-void enter()
-{
-	ret = new Nibbler();
-}
-
-__attribute__((destructor))
-void out()
-{
-	delete ret;
-}
-
-
 extern "C" game_lib *entryPoint()
 {
-	return ret;
+	return new Nibbler();
 }

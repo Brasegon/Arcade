@@ -17,12 +17,16 @@ template <typename T>
 class DLLoader {
     public:
         DLLoader(std::string const &path) {
+            T	*(*ptr)();
             _path = path;
             _void_etoile = dlopen(_path.c_str(), RTLD_NOW);
             if (_void_etoile == NULL) {
-                std::string error = dlerror();
-                throw MyExeption(error);
+                throw MyExeption(dlerror());
             }
+            ptr = reinterpret_cast<T *(*)()>(dlsym(_void_etoile, "entryPoint"));
+            if (ptr == NULL)
+                throw MyExeption("Error : could not create the instance");
+            instance = ptr();
         }
 
         DLLoader(DLLoader const &copy) {
@@ -33,14 +37,13 @@ class DLLoader {
         }
 
         ~DLLoader() {
+            delete instance;
             dlclose(_void_etoile);
         }
-        T *getInstance() {
-            T	*(*ptr)();
-            ptr = reinterpret_cast<T *(*)()>(dlsym(_void_etoile, "entryPoint"));
-            if (ptr == NULL)
-                return (NULL);
-            return ptr();
+
+        T *getInstance() const
+        {
+            return instance;
         }
 
         DLLoader &operator=(DLLoader const &copy) {
@@ -50,10 +53,10 @@ class DLLoader {
             return *this;
         }
 
-    protected:
+    private:
         void *_void_etoile;
         std::string _path;
-    private:
+        T *instance;
 };
 
 #endif /* !DLLOADER_HPP_ */

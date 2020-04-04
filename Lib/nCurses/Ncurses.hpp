@@ -13,7 +13,6 @@
 #include <thread>
 #include <iostream>
 #include <fstream>
-#include <dirent.h>
 
 class Ncurses : public IGraphLib
 {

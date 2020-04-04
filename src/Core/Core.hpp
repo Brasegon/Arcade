@@ -11,9 +11,11 @@
 #include <vector>
 #include <dirent.h>
 #include <regex>
+#include <thread>
 #include "MyExeption.hpp"
 #include "../../Game/IGameLib.hpp"
 #include "../../Lib/IGraphLib.hpp"
+#include "DLLoader.hpp"
 
 class Core {
     public:
@@ -40,6 +42,8 @@ class Core {
     protected:
         IGraphLib *graph;
         game_lib *game;
+        DLLoader<IGraphLib> *loaderGraph;
+        DLLoader<game_lib> *loaderGame;
         int selected_game;
         int selected_graph;
         playerEvent action;

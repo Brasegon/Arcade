@@ -6,7 +6,7 @@
 */
 
 #include "Core.hpp"
-#include "DLLoader.hpp"
+#include "fstream"
 
 static const std::regex REGEX("^[a-zA-Z0-9_]*.so");
 
@@ -16,6 +16,8 @@ Core::Core(const std::string &lib)
     in_menu = true;
     game = nullptr;
     graph = nullptr;
+    loaderGraph = nullptr;
+    loaderGame = nullptr;
     action = PE_NOACTION;
     selected_graph = 0;
     selected_game = 0;
@@ -29,18 +31,41 @@ Core::Core(const std::string &lib)
         action = PE_EXIT;
 }
 
+Core::~Core()
+{
+    if (loaderGraph != nullptr)
+        delete loaderGraph;
+    if (loaderGame != nullptr)
+        delete loaderGame;
+}
+
 void Core::load_lib()
 {
-    DLLoader<IGraphLib> *libtemp = new DLLoader<IGraphLib>(libList[selected_graph]);
-    graph = libtemp->getInstance();
-    DLLoader<game_lib> *gametemp = new DLLoader<game_lib>(gameList[selected_game]);
-    game = gametemp->getInstance();
+    if (loaderGraph != nullptr)
+        delete loaderGraph;
+    if (loaderGame != nullptr)
+        delete loaderGame;
+    loaderGraph = new DLLoader<IGraphLib>(libList[selected_graph]);
+    graph = loaderGraph->getInstance();
+    loaderGame = new DLLoader<game_lib>(gameList[selected_game]);
+    game = loaderGame->getInstance();
     if (graph == NULL)
         throw MyExeption("failed to load graphical library");
     if (game == NULL)
         throw MyExeption("failed to load game library");
     graph->setGameList(gameList);
     graph->setLibList(libList);
+}
+
+
+void Core::arcade()
+{
+    if (in_menu) {
+        menu_loop();
+    }
+    else {
+        game_loop();
+    }
 }
 
 void Core::menu_loop()
@@ -63,9 +88,9 @@ void Core::game_loop()
 
     graph->init_game();
     while (1) {
-        action = graph->getKey();
         mapinfo = game->game(action);
         graph->displayMap(mapinfo);
+        action = graph->getKey();
         if (action == PE_EXIT) {
             action = PE_NOACTION;
             in_menu = true;
@@ -76,79 +101,89 @@ void Core::game_loop()
     }
 }
 
-void Core::arcade()
-{
-    if (in_menu)
-        menu_loop();
-    else
-        game_loop();
-}
-
 bool Core::event()
 {
-    if (action == PE_NEXT_GAME)
+    if (action == PE_NEXT_GAME) {
         nextGame_Lib();
-    if (action == PE_PREV_GAME)
-        prevGame_Lib();
-    if (action == PE_NEXT_LIB)
-        nextGraphique_Lib();
-    if (action == PE_PREV_LIB)
-        prevGraphique_Lib();
-    if (action == PE_EXIT)
         return true;
+    }
+    if (action == PE_PREV_GAME) {
+        prevGame_Lib();
+        return true;
+    }
+    if (action == PE_NEXT_LIB) {
+        nextGraphique_Lib();
+        return true;
+    }
+    if (action == PE_PREV_LIB) {
+        prevGraphique_Lib();
+        return true;
+    }
+    if (action == PE_EXIT) {
+        return true;
+    }
     return false;
 }
 
 void Core::nextGame_Lib()
 {
-    DLLoader<game_lib> *temp;
-
     if (gameList.size() == 1)
         return;
+    delete loaderGame;
     selected_game++;
     if (selected_game > (int) gameList.size()-1)
         selected_game = 0;
-    temp = new DLLoader<game_lib>(gameList[selected_game]);
-    game = temp->getInstance();
-    graph->init_game();
+    loaderGame = new DLLoader<game_lib>(gameList[selected_game]);
+    game = loaderGame->getInstance();
+    if (game == NULL)
+        throw MyExeption("failed to load game library");
 }
 
 void Core::prevGame_Lib()
 {
     if (gameList.size() == 1)
         return;
+    delete loaderGame;
     selected_game--;
     if (selected_game < 0)
         selected_game = gameList.size()-1;
-    DLLoader<game_lib> *temp = new DLLoader<game_lib>(gameList[selected_game]);
-    game = temp->getInstance();
-    graph->init_game();
+    loaderGame = new DLLoader<game_lib>(gameList[selected_game]);
+    game = loaderGame->getInstance();
+    if (game == NULL)
+        throw MyExeption("failed to load game library");
 }
 
 void Core::nextGraphique_Lib()
 {
-    int max_graphical_lib = libList.size() - 1;
+    if (libList.size() == 1)
+        return;
+    delete loaderGraph;
     selected_graph++;
-    if (selected_graph > max_graphical_lib)
+    if (selected_graph > (int) libList.size()-1)
         selected_graph = 0;
-    DLLoader<IGraphLib> *temp = new DLLoader<IGraphLib>(libList[selected_graph]);
-    graph = temp->getInstance();
-    graph->init_game();
+    loaderGraph = new DLLoader<IGraphLib>(libList[selected_graph]);
+    graph = loaderGraph->getInstance();
+    if (graph == NULL)
+        throw MyExeption("failed to load graphical library");
+    graph->setGameList(gameList);
+    graph->setLibList(libList);
 }
 
 void Core::prevGraphique_Lib()
 {
-    int max_graphical_lib = libList.size() - 1;
-    
-    if (selected_graph == 0)
-        selected_graph = max_graphical_lib;
-    else
-        selected_graph = selected_graph - 1;
-    DLLoader<IGraphLib> *temp = new DLLoader<IGraphLib>(libList[selected_graph]);
-    graph = temp->getInstance();
-    graph->init_game();
+    if (libList.size() == 1)
+        return;
+    delete loaderGraph;
+    selected_graph--;
+    if (selected_graph < 0)
+        selected_graph = libList.size()-1;
+    loaderGraph = new DLLoader<IGraphLib>(libList[selected_graph]);
+    graph = loaderGraph->getInstance();
+    if (graph == NULL)
+        throw MyExeption("failed to load graphical library");
+    graph->setGameList(gameList);
+    graph->setLibList(libList);
 }
-
 
 void Core::parseGameList() {
     struct dirent **namelist;
@@ -162,7 +197,7 @@ void Core::parseGameList() {
 		    std::string name = namelist[n]->d_name;
             if (std::regex_match(name.c_str(), cm, REGEX)) {
                 gameList.push_back("./Game/" + name);
-                printf("%s", name.c_str());
+                printf("%s\n", name.c_str());
             }
             free(namelist[n]);
         }
@@ -204,6 +239,3 @@ playerEvent Core::get_action() const
     return action;
 }
 
-Core::~Core()
-{
-}
