@@ -145,6 +145,7 @@ void SFML::displayMap(map_info_t map)
                     _map.push_back(rectangle);
                     break;
                 case 'P':
+                case 'B':
                     rectangle.setFillColor(sf::Color::Yellow);
                     rectangle.setPosition(x, y);
                     _map.push_back(rectangle);
